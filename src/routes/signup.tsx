@@ -261,7 +261,7 @@ function SignupPage() {
               By Continuing you agree to the Merit's{' '}
               <Link to="/" className="text-primary hover:underline">
                 Terms of Service
-              </Link>{' '}
+              </Link>
               and{' '}
               <Link to="/" className="text-primary hover:underline">
                 Privacy Policy
