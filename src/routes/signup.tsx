@@ -262,7 +262,7 @@ function SignupPage() {
               <Link to="/" className="text-primary hover:underline">
                 Terms of Service
               </Link>
-              and{' '}
+              and
               <Link to="/" className="text-primary hover:underline">
                 Privacy Policy
               </Link>
