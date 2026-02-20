@@ -29,12 +29,15 @@ export default function Header() {
     <>
       <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
         <div className="px-4 sm:px-6 py-3 flex items-center justify-between max-w-[1400px] mx-auto">
-          <div className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <MeritLogo className="h-8 w-8 text-[#008FE9]" />
-            <span className="text-xl font-semibold text-primary">
+          <Link
+            to="/dashboard"
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+          >
+            <MeritLogo className="h-6 w-6 sm:h-8 sm:w-8 text-[#008FE9]" />
+            <span className="text-lg sm:text-xl font-semibold text-primary">
               Merit Finance
             </span>
-          </div>
+          </Link>
 
           {isAuthenticated && (
             <>

@@ -189,7 +189,11 @@ function DashboardPage() {
                       {formatSource(tx.source)}
                     </p>
                     <p className="text-gray-400 text-xs">
-                      {new Date(tx.createdAt).toLocaleString()}
+                      {new Date(tx.createdAt).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}
                     </p>
                   </div>
                 </div>
