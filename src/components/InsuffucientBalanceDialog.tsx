@@ -3,6 +3,7 @@ import { X, AlertTriangle, Wallet } from 'lucide-react'
 import { useState } from 'react'
 import apiClient from '@/lib/api-client'
 import { DepositPaymentModal } from './DepositPaymentModal'
+import { Input } from '@/components/ui/input'
 
 type Network = 'TRON' | 'BSC' | 'TON'
 type View = 'warning' | 'deposit'
@@ -54,18 +55,21 @@ export function InsufficientBalanceDialog({
     setIsLoading(true)
     setError(null)
     try {
-      const response = await apiClient.post('/transaction/deposit', {
-        amount: parseFloat(amount),
-        network,
-      })
+      const response = await apiClient.post(
+        '/transaction/deposit',
+        { amount: parseFloat(amount), network },
+        { validateStatus: (status) => status < 500 },
+      )
+
       if (response.data.success) {
         setPaymentData(response.data.data)
-        onOpenChange(false)
         setPaymentOpen(true)
+        onOpenChange(false)
       } else {
         setError('Deposit failed. Please try again.')
       }
     } catch (err: any) {
+      console.log('Error:', err)
       setError(
         err.response?.data?.message || 'Deposit failed. Please try again.',
       )
@@ -135,14 +139,14 @@ export function InsufficientBalanceDialog({
                 <div className="flex flex-col gap-2">
                   <button
                     onClick={() => setView('deposit')}
-                    className="w-full bg-gray-900 hover:bg-gray-700 text-white py-3 rounded-xl font-semibold text-sm transition-colors flex items-center justify-center gap-2"
+                    className="w-full cursor-pointer bg-primary hover:bg-primary-light text-white py-3 rounded-xl font-semibold text-sm transition-colors flex items-center justify-center gap-2"
                   >
                     <Wallet className="w-4 h-4" />
                     Deposit Funds
                   </button>
                   <button
                     onClick={resetAndClose}
-                    className="w-full text-gray-500 hover:text-gray-700 py-2 text-sm transition-colors"
+                    className="w-full cursor-pointer text-gray-500 hover:text-gray-700 py-2 text-sm transition-colors"
                   >
                     Cancel
                   </button>
@@ -154,7 +158,7 @@ export function InsufficientBalanceDialog({
               <div>
                 <button
                   onClick={() => setView('warning')}
-                  className="text-gray-400 hover:text-gray-600 text-xs mb-4 flex items-center gap-1 transition-colors"
+                  className="text-gray-400 cursor-pointer hover:text-gray-600 text-xs mb-4 flex items-center gap-1 transition-colors"
                 >
                   ← Back
                 </button>
@@ -170,11 +174,10 @@ export function InsufficientBalanceDialog({
                   <label className="block text-sm font-medium text-gray-700 mb-1.5">
                     Amount (USD)
                   </label>
-                  <input
+                  <Input
                     type="number"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="w-full border border-[#E8E8E8] rounded-lg px-4 py-2.5 text-sm text-gray-900 outline-none focus:border-gray-400 transition-colors"
                     placeholder="0.00"
                     min="0"
                   />
@@ -195,9 +198,9 @@ export function InsufficientBalanceDialog({
                       <button
                         key={n}
                         onClick={() => setNetwork(n)}
-                        className={`py-2.5 rounded-xl text-sm font-semibold border transition-colors ${
+                        className={`py-2.5 cursor-pointer rounded-xl text-sm font-semibold border transition-colors ${
                           network === n
-                            ? 'bg-gray-900 text-white border-gray-900'
+                            ? 'bg-primary text-white border-primary'
                             : 'bg-gray-50 text-gray-600 border-[#E8E8E8] hover:bg-gray-100'
                         }`}
                       >
@@ -207,16 +210,10 @@ export function InsufficientBalanceDialog({
                   </div>
                 </div>
 
-                {error && (
-                  <div className="bg-red-50 border border-red-100 rounded-xl p-3 mb-4">
-                    <p className="text-red-600 text-xs text-center">{error}</p>
-                  </div>
-                )}
-
                 <button
                   onClick={handleDeposit}
                   disabled={isLoading || !amount || parseFloat(amount) <= 0}
-                  className="w-full bg-gray-900 hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-3 rounded-xl font-semibold text-sm transition-colors flex items-center justify-center gap-2"
+                  className="w-full bg-primary hover:bg-primary-light disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-3 rounded-xl font-semibold text-sm transition-colors flex items-center justify-center gap-2"
                 >
                   {isLoading ? (
                     <>

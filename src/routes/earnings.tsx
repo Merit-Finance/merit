@@ -116,7 +116,7 @@ function LevelCard({
       {isActive && (
         <button
           onClick={handleUpgradeClick}
-          className="w-full flex cursor-pointer items-center justify-center gap-2 bg-gray-900 hover:bg-gray-700 text-white py-2.5 rounded-xl text-sm font-semibold transition-colors"
+          className="w-full flex cursor-pointer items-center justify-center gap-2 bg-primary hover:bg-primary-light text-white py-2.5 rounded-xl text-sm font-semibold transition-colors"
         >
           <PlusCircle className="w-4 h-4" />
           Upgrade Level {level}

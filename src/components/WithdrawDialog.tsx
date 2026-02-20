@@ -1,6 +1,7 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { useState } from 'react'
 import { X, AlertTriangle } from 'lucide-react'
+import { Input } from '@/components/ui/input'
 
 interface WithdrawDialogProps {
   open: boolean
@@ -42,14 +43,13 @@ export function WithdrawDialog({
             <label className="block text-sm font-semibold text-gray-900 mb-1.5">
               Amount (USD)
             </label>
-            <input
+            <Input
               type="number"
               min={minWithdrawal}
               max={availableBalance}
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="0.00"
-              className="w-full border border-[#E8E8E8] rounded-lg px-4 py-2.5 text-sm text-gray-900 outline-none focus:border-gray-400 transition-colors bg-white"
             />
             <p className="text-gray-400 text-xs mt-1.5">
               Available: ${availableBalance.toFixed(2)} | Min: ${minWithdrawal}
@@ -60,12 +60,11 @@ export function WithdrawDialog({
             <label className="block text-sm font-semibold text-gray-900 mb-1.5">
               USDT Wallet Address (BEP-20)
             </label>
-            <input
+            <Input
               type="text"
               value={walletAddress}
               onChange={(e) => setWalletAddress(e.target.value)}
               placeholder="0x..."
-              className="w-full bg-gray-50 border border-[#E8E8E8] rounded-lg px-4 py-2.5 text-sm text-gray-700 outline-none focus:border-gray-400 transition-colors"
             />
           </div>
 
@@ -85,7 +84,7 @@ export function WithdrawDialog({
 
           <button
             onClick={handleConfirm}
-            className="w-full bg-gray-900 hover:bg-gray-700 text-white py-3 rounded-xl font-semibold text-sm transition-colors"
+            className="w-full bg-primary cursor-pointer hover:bg-primary-light text-white py-3 rounded-xl font-semibold text-sm transition-colors"
           >
             Confirm Withdrawal
           </button>

@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import { useUserStore } from '@/stores/user.store'
 import apiClient from '@/lib/api-client'
+import { Input } from '@/components/ui/input'
 
 export const Route = createFileRoute('/profile')({
   component: ProfilePage,
@@ -35,15 +36,14 @@ function EditableField({
         {label}
       </label>
       <div className="flex items-center gap-2">
-        <input
-          className="flex-1 bg-gray-50 border border-[#E8E8E8] rounded-lg px-4 py-2.5 text-sm text-gray-800 outline-none focus:border-gray-400 transition-colors disabled:cursor-default"
+        <Input
           value={val}
           disabled={!editing}
           onChange={(e) => setVal(e.target.value)}
         />
         {editing ? (
           <button
-            className="px-4 py-2.5 bg-gray-900 text-white text-sm rounded-lg font-medium hover:bg-gray-700 transition-colors"
+            className="px-4 py-2.5 bg-primary hover:bg-primary-light text-white text-sm rounded-lg font-medium transition-colors"
             onClick={() => {
               onSave?.(val)
               setEditing(false)
@@ -96,11 +96,11 @@ function PasswordField({
         {label}
       </label>
       <div className="relative">
-        <input
+        <Input
           type={show ? 'text' : 'password'}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full bg-gray-50 border border-[#E8E8E8] rounded-lg px-4 py-2.5 pr-10 text-sm text-gray-800 outline-none focus:border-gray-400 transition-colors"
+          className="pr-10"
         />
         <button
           type="button"
@@ -189,7 +189,6 @@ function ProfilePage() {
               value={userData?.name ?? ''}
               onSave={handleSaveName}
             />
-            {/* <ReadOnlyField label="Username" value={userData?.userName ?? '—'} /> */}
             <ReadOnlyField label="Email" value={userData?.email ?? '—'} />
             <ReadOnlyField
               label="Phone Number"
@@ -260,7 +259,7 @@ function ProfilePage() {
                 <button
                   onClick={handleChangePassword}
                   disabled={pwLoading || !oldPassword || !newPassword}
-                  className="w-full bg-gray-900 hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-2.5 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2"
+                  className="w-full bg-primary hover:bg-primary-light disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-2.5 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2"
                 >
                   {pwLoading ? (
                     <>
@@ -283,8 +282,7 @@ function ProfilePage() {
               <label className="block text-sm text-gray-700 font-medium mb-1">
                 Default USDT Wallet Address (BEP-20)
               </label>
-              <input
-                className="w-full bg-gray-50 border border-[#E8E8E8] rounded-lg px-4 py-2.5 text-sm text-gray-800 outline-none focus:border-gray-400 transition-colors"
+              <Input
                 placeholder="0x..."
                 value={walletAddress}
                 onChange={(e) => {
@@ -295,7 +293,7 @@ function ProfilePage() {
             </div>
             <button
               onClick={() => setWalletSaved(true)}
-              className="flex items-center gap-2 bg-gray-900 hover:bg-gray-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors"
+              className="flex items-center gap-2 bg-primary hover:bg-primary-light text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors"
             >
               <Wallet className="w-4 h-4" />
               {walletSaved ? 'Saved!' : 'Save Wallet Address'}

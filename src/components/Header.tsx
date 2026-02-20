@@ -27,9 +27,8 @@ export default function Header() {
 
   return (
     <>
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
         <div className="px-4 sm:px-6 py-3 flex items-center justify-between max-w-[1400px] mx-auto">
-          {/* Logo */}
           <div className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <MeritLogo className="h-8 w-8 text-[#008FE9]" />
             <span className="text-xl font-semibold text-primary">
