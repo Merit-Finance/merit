@@ -76,10 +76,10 @@ function DashboardPage() {
             )}
           </div>
 
-          <div className="flex flex-row sm:flex-col gap-2 sm:gap-3">
+          <div className="flex flex-col sm:flex-col gap-2 sm:gap-3 w-full sm:w-auto">
             <button
               onClick={() => setWithdrawOpen(true)}
-              className="flex-1 cursor-pointer sm:flex-none bg-transparent hover:bg-white/30 text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-full border border-white font-medium transition-all flex items-center justify-center gap-2 text-sm backdrop-blur-sm"
+              className="w-full sm:w-auto cursor-pointer bg-white/20 hover:bg-white/30 text-white px-4 sm:px-6 py-2.5 rounded-full border border-white font-medium transition-all flex items-center justify-center gap-2 text-sm backdrop-blur-sm"
             >
               Withdraw <Receive />
             </button>
