@@ -27,15 +27,15 @@ export function WithdrawDialog({
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/40 z-40 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md bg-white rounded-2xl shadow-xl p-6 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95">
+        <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[90%] max-w-md bg-white rounded-2xl shadow-xl p-6 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95">
           <Dialog.Close className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors">
             <X className="w-4 h-4" />
           </Dialog.Close>
 
-          <Dialog.Title className="text-lg font-bold text-gray-900">
+          <Dialog.Title className="text-lg md:text-start text-center  font-bold text-gray-900">
             Withdraw to USDT Wallet
           </Dialog.Title>
-          <Dialog.Description className="text-sm text-gray-400 mt-0.5 mb-5">
+          <Dialog.Description className="text-sm md:text-start text-center text-gray-400 mt-0.5 mb-5">
             Enter the amount and BEP-20 wallet address for withdrawal
           </Dialog.Description>
 

@@ -7,6 +7,7 @@ export interface RegisterPayload {
   address: string
   password: string
   role: UserRole
+  userName: string
 }
 
 export interface User {
@@ -17,6 +18,7 @@ export interface User {
   phoneNumber?: string
   address?: string
   createdAt?: string
+  userName: string
 }
 
 export interface AuthResponse {

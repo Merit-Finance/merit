@@ -94,7 +94,9 @@ export function UpgradeDialog({
             <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-lg mb-2">
               {getUserInitials()}
             </div>
-            <p className="text-gray-900 font-semibold text-sm">{user?.name}</p>
+            <p className="text-gray-900 font-semibold text-sm">
+              {user?.userName}
+            </p>
           </div>
 
           <div className="bg-gray-50 rounded-xl p-4 space-y-2 mb-4">

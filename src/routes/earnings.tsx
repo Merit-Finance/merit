@@ -18,11 +18,11 @@ const levelConfig = [
 ]
 
 function getLevelStatus(level: number, currentLevel: number) {
-  if (level < currentLevel) return 'complete'
-  if (level === currentLevel) return 'active'
+  const effectiveLevel = currentLevel === 0 ? 1 : currentLevel
+  if (level < effectiveLevel) return 'complete'
+  if (level === effectiveLevel) return 'active'
   return 'locked'
 }
-
 function getLockedBy(level: number) {
   return `Complete Level ${level - 1} First`
 }
@@ -159,7 +159,7 @@ function EarningsPage() {
   const { userData, fetchUser } = useUserStore()
 
   const selectedLevel = levelConfig.find((l) => l.level === upgradeLevel)
-  const currentLevel = userData?.currentLevel ?? 1
+  const currentLevel = userData?.currentLevel || 1
 
   useEffect(() => {
     fetchBalanceStat()

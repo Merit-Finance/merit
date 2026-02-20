@@ -20,6 +20,7 @@ function SignupPage() {
     address: '',
     password: '',
     confirmPassword: '',
+    userName: '',
   })
 
   const [validationErrors, setValidationErrors] = useState<
@@ -67,6 +68,10 @@ function SignupPage() {
       errors.address = 'Address is required'
     }
 
+    if (!formData.userName.trim()) {
+      errors.userName = 'User name is required'
+    }
+
     if (!formData.password) {
       errors.password = 'Password is required'
     } else if (formData.password.length < 6) {
@@ -97,6 +102,7 @@ function SignupPage() {
         phoneNumber: formData.phoneNumber,
         address: formData.address,
         password: formData.password,
+        userName: formData.userName,
         role: 'INVESTOR',
       }
 
@@ -140,6 +146,27 @@ function SignupPage() {
               {validationErrors.name && (
                 <p className="text-xs text-red-500 mt-1">
                   {validationErrors.name}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Input
+                  type="text"
+                  name="userName"
+                  placeholder="User name"
+                  value={formData.userName}
+                  onChange={handleChange}
+                  className={`w-full pl-10 pr-4 py-3 ${validationErrors.userName ? 'border-red-500' : ''}`}
+                  aria-invalid={!!validationErrors.userName}
+                  disabled={isLoading}
+                />
+              </div>
+              {validationErrors.userName && (
+                <p className="text-xs text-red-500 mt-1">
+                  {validationErrors.userName}
                 </p>
               )}
             </div>
