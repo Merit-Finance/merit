@@ -54,3 +54,15 @@ export interface BalanceResponse {
   data: BalanceData
   statusCode: number
 }
+
+export interface BalanceStat {
+  totalWithdraw: number
+  totalEarn: number
+}
+
+export interface BalanceStatResponse {
+  success: boolean
+  message: string
+  data: BalanceStat
+  statusCode: number
+}

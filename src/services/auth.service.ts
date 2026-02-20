@@ -8,7 +8,7 @@ export const authService = {
   },
 
   sendOTP: async (email: string): Promise<OTPResponse> => {
-    const response = await apiClient.post<OTPResponse>('/auth/login-with-otp', {
+    const response = await apiClient.post<OTPResponse>('/auth/login', {
       email,
     })
     return response.data

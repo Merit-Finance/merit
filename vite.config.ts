@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import { devtools } from '@tanstack/devtools-vite'
+import { TanStackRouterVite } from '@tanstack/router-plugin/vite' 
 import viteReact from '@vitejs/plugin-react'
 import viteTsConfigPaths from 'vite-tsconfig-paths'
 import svgr from 'vite-plugin-svgr'
@@ -13,11 +14,12 @@ const config = defineConfig({
     },
   },
   plugins: [
+    TanStackRouterVite({ autoCodeSplitting: true }),  
     devtools(),
     viteTsConfigPaths({
       projects: ['./tsconfig.json'],
     }),
-    svgr(), 
+    svgr(),
     tailwindcss(),
     viteReact(),
   ],

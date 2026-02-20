@@ -1,4 +1,4 @@
-import { DashboardIcon, EarningIcon, PeopleIcon, SupportIcon } from '@/assets'
+import { DashboardIcon, EarningIcon, PeopleIcon } from '@/assets'
 
 export const navItems = [
   {
@@ -15,10 +15,5 @@ export const navItems = [
     name: 'Referrals',
     path: '/referrals',
     icon: PeopleIcon,
-  },
-  {
-    name: 'Support',
-    path: '/support',
-    icon: SupportIcon,
   },
 ] as const

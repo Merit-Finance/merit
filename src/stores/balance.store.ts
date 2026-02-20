@@ -1,22 +1,25 @@
 import { create } from 'zustand'
 import { balanceService } from '@/services/balance.service'
+import { BalanceStat } from '@/lib/auth'
 
 interface BalanceState {
   mainBalance: number | null
   referralBalance: number | null
+  balanceStat: BalanceStat | null
   isLoading: boolean
   error: string | null
-  
-  // Actions
+
   fetchMainBalance: () => Promise<void>
   fetchReferralBalance: () => Promise<void>
   fetchAllBalances: () => Promise<void>
+  fetchBalanceStat: () => Promise<void>
   clearError: () => void
 }
 
 export const useBalanceStore = create<BalanceState>((set) => ({
   mainBalance: null,
   referralBalance: null,
+  balanceStat: null,
   isLoading: false,
   error: null,
 
@@ -24,23 +27,14 @@ export const useBalanceStore = create<BalanceState>((set) => ({
     set({ isLoading: true, error: null })
     try {
       const response = await balanceService.getMainBalance()
-      
       if (response.success && response.data) {
-        const balance = parseFloat(response.data.amount)
-        
-        set({
-          mainBalance: balance,
-          isLoading: false,
-          error: null,
-        })
+        set({ mainBalance: parseFloat(response.data.amount), isLoading: false })
       }
     } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.message || 
-        'Failed to fetch balance. Please try again.'
-      
       set({
-        error: errorMessage,
+        error:
+          error.response?.data?.message ||
+          'Failed to fetch balance. Please try again.',
         isLoading: false,
       })
     }
@@ -50,23 +44,17 @@ export const useBalanceStore = create<BalanceState>((set) => ({
     set({ isLoading: true, error: null })
     try {
       const response = await balanceService.getReferralBalance()
-      
       if (response.success && response.data) {
-        const balance = parseFloat(response.data.amount)
-        
         set({
-          referralBalance: balance,
+          referralBalance: parseFloat(response.data.amount),
           isLoading: false,
-          error: null,
         })
       }
     } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.message || 
-        'Failed to fetch balance. Please try again.'
-      
       set({
-        error: errorMessage,
+        error:
+          error.response?.data?.message ||
+          'Failed to fetch balance. Please try again.',
         isLoading: false,
       })
     }
@@ -79,20 +67,37 @@ export const useBalanceStore = create<BalanceState>((set) => ({
         balanceService.getMainBalance(),
         balanceService.getReferralBalance(),
       ])
-      
       set({
-        mainBalance: mainResponse.success ? parseFloat(mainResponse.data.amount) : null,
-        referralBalance: referralResponse.success ? parseFloat(referralResponse.data.amount) : null,
+        mainBalance: mainResponse.success
+          ? parseFloat(mainResponse.data.amount)
+          : null,
+        referralBalance: referralResponse.success
+          ? parseFloat(referralResponse.data.amount)
+          : null,
         isLoading: false,
         error: null,
       })
     } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.message || 
-        'Failed to fetch balances. Please try again.'
-      
       set({
-        error: errorMessage,
+        error:
+          error.response?.data?.message ||
+          'Failed to fetch balances. Please try again.',
+        isLoading: false,
+      })
+    }
+  },
+
+  fetchBalanceStat: async () => {
+    set({ isLoading: true, error: null })
+    try {
+      const response = await balanceService.getBalanceStat()
+      if (response.success && response.data) {
+        set({ balanceStat: response.data, isLoading: false })
+      }
+    } catch (error: any) {
+      set({
+        error:
+          error.response?.data?.message || 'Failed to fetch balance stats.',
         isLoading: false,
       })
     }
