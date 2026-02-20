@@ -5,6 +5,7 @@ export interface UserData {
   name: string
   email: string
   phoneNumber: string
+  userName: string
   currentLevel: number
   role: string
   isVerified: boolean

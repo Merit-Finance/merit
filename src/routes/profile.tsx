@@ -189,6 +189,11 @@ function ProfilePage() {
               value={userData?.name ?? ''}
               onSave={handleSaveName}
             />
+            <EditableField
+              label="User Name"
+              value={userData?.userName ?? ''}
+              onSave={handleSaveName}
+            />
             <ReadOnlyField label="Email" value={userData?.email ?? '—'} />
             <ReadOnlyField
               label="Phone Number"
