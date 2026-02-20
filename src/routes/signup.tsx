@@ -284,17 +284,6 @@ function SignupPage() {
               {isLoading ? 'Creating account...' : 'Continue'}
             </button>
 
-            <p className="text-xs text-center text-gray-500 mt-4">
-              By Continuing you agree to the Merit's{' '}
-              <Link to="/" className="text-primary hover:underline">
-                Terms of Service
-              </Link>
-              and
-              <Link to="/" className="text-primary hover:underline">
-                Privacy Policy
-              </Link>
-            </p>
-
             <p className="text-sm text-center text-gray-600 mt-4">
               Already have an account?{' '}
               <Link to="/" className="text-primary hover:underline font-medium">
