@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { balanceService } from '@/services/balance.service'
-import { BalanceStat } from '@/lib/auth'
+import { BalanceStat } from '@/lib/balance'
 
 interface BalanceState {
   mainBalance: number | null

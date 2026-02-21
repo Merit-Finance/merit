@@ -20,19 +20,19 @@ function RootComponent() {
   const isAuthRoute = AUTH_ROUTES.includes(pathname)
 
   return (
-    <>
+    <div className="flex min-h-screen flex-col">
       {!isAuthRoute && <Header />}
       <main
         className={
           !isAuthRoute
-            ? 'px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 max-w-[1500px] mx-auto'
-            : ''
+            ? 'flex-1 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 max-w-[1500px] mx-auto w-full'
+            : 'flex-1'
         }
       >
         <Outlet />
       </main>
       {!isAuthRoute && <Footer />}
       {import.meta.env.DEV && <TanStackRouterDevtools />}
-    </>
+    </div>
   )
 }

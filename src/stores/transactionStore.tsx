@@ -1,5 +1,6 @@
 import { create } from 'zustand'
-import { transactionService, Transaction } from '@/services/transaction.service'
+import { transactionService } from '@/services/transaction.service'
+import { Transaction } from '@/lib/transaction'
 
 interface TransactionState {
   transactions: Transaction[]
@@ -19,7 +20,6 @@ export const useTransactionStore = create<TransactionState>((set) => ({
     set({ isLoading: true, error: null })
     try {
       const response = await transactionService.getTransactions()
-      console.log('transactions response:', response)
       if (response.success && response.data) {
         set({ transactions: response.data, isLoading: false })
       }

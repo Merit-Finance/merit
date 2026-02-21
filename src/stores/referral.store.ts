@@ -56,13 +56,11 @@ export const useReferralStore = create<ReferralState>((set) => ({
     }
   },
 
-  // Run independently so a 404 on list doesn't kill stats
   fetchAll: async () => {
     set({ isLoading: true, error: null })
 
     try {
       const statResponse = await referralService.getReferralStat()
-      console.log('statResponse:', statResponse)
       if (statResponse.success) {
         set({ referralStat: statResponse.data })
       }
