@@ -3,6 +3,7 @@ import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import Header from '@/components/Header'
 import '../styles.css'
 import type { QueryClient } from '@tanstack/react-query'
+import Footer from '@/components/Footer'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -30,6 +31,7 @@ function RootComponent() {
       >
         <Outlet />
       </main>
+      {!isAuthRoute && <Footer />}
       {import.meta.env.DEV && <TanStackRouterDevtools />}
     </>
   )
