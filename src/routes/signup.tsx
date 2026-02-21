@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { Lock, Mail, MapPin, Phone, User } from 'lucide-react'
+import { Lock, Mail, MapPin, Phone, User, Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { RegisterPayload } from '@/lib/auth'
@@ -26,6 +26,9 @@ function SignupPage() {
   const [validationErrors, setValidationErrors] = useState<
     Record<string, string>
   >({})
+
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -238,15 +241,26 @@ function SignupPage() {
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   name="password"
                   placeholder="Create your password"
                   value={formData.password}
                   onChange={handleChange}
-                  className={`w-full pl-10 pr-4 py-3 ${validationErrors.password ? 'border-red-500' : ''}`}
+                  className={`w-full pl-10 pr-10 py-3 ${validationErrors.password ? 'border-red-500' : ''}`}
                   aria-invalid={!!validationErrors.password}
                   disabled={isLoading}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((p) => !p)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
+                </button>
               </div>
               {validationErrors.password && (
                 <p className="text-xs text-red-500 mt-1">
@@ -259,15 +273,26 @@ function SignupPage() {
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
-                  type="password"
+                  type={showConfirmPassword ? 'text' : 'password'}
                   name="confirmPassword"
                   placeholder="Confirm password"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className={`w-full pl-10 pr-4 py-3 ${validationErrors.confirmPassword ? 'border-red-500' : ''}`}
+                  className={`w-full pl-10 pr-10 py-3 ${validationErrors.confirmPassword ? 'border-red-500' : ''}`}
                   aria-invalid={!!validationErrors.confirmPassword}
                   disabled={isLoading}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword((p) => !p)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
+                </button>
               </div>
               {validationErrors.confirmPassword && (
                 <p className="text-xs text-red-500 mt-1">

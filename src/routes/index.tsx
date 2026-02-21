@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { Lock, Mail } from 'lucide-react'
+import { Lock, Mail, Eye, EyeOff } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { useAuthStore } from '@/stores/auth.stores'
@@ -33,6 +33,7 @@ function LoginPage() {
   const [loginMethod, setLoginMethod] = useState<'otp' | 'password'>('otp')
   const [otpSent, setOtpSent] = useState(false)
   const [timeRemaining, setTimeRemaining] = useState(OTP_TIMEOUT_SECONDS)
+  const [showPassword, setShowPassword] = useState(false)
 
   const [formData, setFormData] = useState({
     email: '',
@@ -199,6 +200,7 @@ function LoginPage() {
   const switchToPassword = () => {
     setLoginMethod('password')
     setOtpSent(false)
+    setShowPassword(false)
     setFormData((prev) => ({ ...prev, otp: '', password: '' }))
     setValidationErrors({})
     clearError()
@@ -207,6 +209,7 @@ function LoginPage() {
   const switchToOTP = () => {
     setLoginMethod('otp')
     setOtpSent(false)
+    setShowPassword(false)
     setFormData((prev) => ({ ...prev, otp: '', password: '' }))
     setValidationErrors({})
     clearError()
@@ -405,17 +408,28 @@ function LoginPage() {
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <Input
                     id="password"
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     name="password"
                     placeholder="Enter your password"
                     value={formData.password}
                     onChange={handleChange}
-                    className={`w-full pl-10 pr-4 py-5 ${
+                    className={`w-full pl-10 pr-10 py-5 ${
                       validationErrors.password ? 'border-red-500' : ''
                     }`}
                     aria-invalid={!!validationErrors.password}
                     disabled={isLoading}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((p) => !p)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                  </button>
                 </div>
                 {validationErrors.password && (
                   <p className="text-xs text-red-500 mt-1">
