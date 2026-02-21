@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { MeritLogo } from '@/assets'
 import {
   Lock,
   Mail,
@@ -376,9 +377,7 @@ function SignupPage() {
           </div>
 
           <div className="relative z-10 flex items-center gap-2.5">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shrink-0">
-              <TrendingUp className="w-4 h-4 text-white" />
-            </div>
+            <MeritLogo className="h-6 w-6 sm:h-8 sm:w-8 text-[#008FE9]" />
             <span className="text-white font-semibold text-lg">
               Merit Finance
             </span>
@@ -437,9 +436,9 @@ function SignupPage() {
           </div>
         </div>
 
-        <div className="flex-1 flex items-center justify-center px-16 bg-white overflow-y-auto">
-          <div className="w-full max-w-sm py-12">
-            <div className="mb-8">
+        <div className="flex-1 flex items-center justify-center px-10 bg-white overflow-y-auto">
+          <div className="w-full max-w-sm py-6">
+            <div className="mb-5">
               <h2 className="text-2xl font-bold text-gray-900">
                 Create account
               </h2>
