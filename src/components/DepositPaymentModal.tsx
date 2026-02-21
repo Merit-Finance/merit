@@ -54,8 +54,11 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
 
   const pad = (n: number) => String(n).padStart(2, '0')
 
-  // Countdown circle progress
-  const totalSeconds = 10 * 60 // 10 min default
+  const totalSeconds = Math.floor(
+    (new Date(payment.valid_until).getTime() -
+      new Date(payment.created_at).getTime()) /
+      1000,
+  )
   const progress = Math.min((seconds + minutes * 60) / totalSeconds, 1)
   const circumference = 2 * Math.PI * 28
   const strokeDashoffset = circumference * (1 - progress)

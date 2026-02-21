@@ -13,6 +13,7 @@ export interface PaymentData {
   payment_status: string
   pay_address: string
   price_amount: number
+  created_at: string
   pay_amount: number
   pay_currency: string
   network: string
