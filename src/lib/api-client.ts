@@ -18,7 +18,7 @@ apiClient.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error)
-  }
+  },
 )
 
 // Response interceptor for handling errors
@@ -26,12 +26,14 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Handle unauthorized access
-      localStorage.removeItem('auth_token')
-      window.location.href = '/'
+      const isOnLoginPage = window.location.pathname === '/'
+      if (!isOnLoginPage) {
+        localStorage.removeItem('auth_token')
+        window.location.href = '/'
+      }
     }
     return Promise.reject(error)
-  }
+  },
 )
 
 export default apiClient

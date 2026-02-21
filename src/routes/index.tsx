@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { Lock, Mail, Eye, EyeOff } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { useAuthStore } from '@/stores/auth.stores'
 import { Label } from '@/components/ui/label'
@@ -34,6 +34,7 @@ function LoginPage() {
   const [otpSent, setOtpSent] = useState(false)
   const [timeRemaining, setTimeRemaining] = useState(OTP_TIMEOUT_SECONDS)
   const [showPassword, setShowPassword] = useState(false)
+  const isSubmittingOtp = useRef(false)
 
   const [formData, setFormData] = useState({
     email: '',
@@ -47,7 +48,6 @@ function LoginPage() {
 
   useEffect(() => {
     if (!otpSent) return
-
     const interval = setInterval(() => {
       setTimeRemaining((prev) => {
         if (prev <= 1) {
@@ -57,142 +57,144 @@ function LoginPage() {
         return prev - 1
       })
     }, 1000)
-
     return () => clearInterval(interval)
   }, [otpSent])
 
   const isOtpExpired = timeRemaining === 0
 
+  useEffect(() => {
+    if (
+      loginMethod === 'otp' &&
+      otpSent &&
+      formData.otp.length === 6 &&
+      !isLoading &&
+      !isOtpExpired &&
+      !error &&
+      !isSubmittingOtp.current
+    ) {
+      isSubmittingOtp.current = true
+      verifyOTP(formData.email, formData.otp)
+        .then(() => {
+          navigate({ to: '/dashboard' })
+        })
+        .catch(() => {
+          setFormData((prev) => ({ ...prev, otp: '' }))
+        })
+        .finally(() => {
+          isSubmittingOtp.current = false
+        })
+    }
+  }, [formData.otp])
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
-
     if (validationErrors[name]) {
       setValidationErrors((prev) => {
-        const newErrors = { ...prev }
-        delete newErrors[name]
-        return newErrors
+        const next = { ...prev }
+        delete next[name]
+        return next
       })
     }
-    if (error) {
-      clearError()
-    }
+    if (error) clearError()
   }
 
   const handleOtpChange = (value: string) => {
     setFormData((prev) => ({ ...prev, otp: value }))
     if (validationErrors.otp) {
       setValidationErrors((prev) => {
-        const newErrors = { ...prev }
-        delete newErrors.otp
-        return newErrors
+        const next = { ...prev }
+        delete next.otp
+        return next
       })
     }
-    if (error) {
-      clearError()
-    }
+    if (error) clearError()
   }
 
   const validateEmail = (): boolean => {
     const errors: Record<string, string> = {}
-
     if (!formData.email.trim()) {
       errors.email = 'Email is required'
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       errors.email = 'Please enter a valid email'
     }
-
     setValidationErrors(errors)
     return Object.keys(errors).length === 0
   }
 
   const validatePasswordLogin = (): boolean => {
     const errors: Record<string, string> = {}
-
     if (!formData.email.trim()) {
       errors.email = 'Email is required'
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       errors.email = 'Please enter a valid email'
     }
-
     if (!formData.password) {
       errors.password = 'Password is required'
     }
-
     setValidationErrors(errors)
     return Object.keys(errors).length === 0
   }
 
   const validateOtp = (): boolean => {
     const errors: Record<string, string> = {}
-
     if (!formData.otp || formData.otp.length !== 6) {
       errors.otp = 'Please enter a valid 6-digit OTP'
     }
-
     setValidationErrors(errors)
     return Object.keys(errors).length === 0
   }
 
   const handleSendOTP = async (e: React.FormEvent) => {
     e.preventDefault()
-
     if (!validateEmail()) return
-
     try {
       await sendOTP(formData.email)
       setOtpSent(true)
       setTimeRemaining(OTP_TIMEOUT_SECONDS)
-    } catch (err) {
-      console.error('Failed to send OTP:', err)
-    }
+    } catch {}
   }
 
   const handleVerifyOTP = async (e: React.FormEvent) => {
     e.preventDefault()
-
     if (!validateOtp()) return
-
     try {
       await verifyOTP(formData.email, formData.otp)
       navigate({ to: '/dashboard' })
-    } catch (err) {
-      console.error('OTP verification failed:', err)
+    } catch {
+      setFormData((prev) => ({ ...prev, otp: '' }))
     }
   }
 
   const handlePasswordLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-
+    console.log('form submitted, no reload should happen')
     if (!validatePasswordLogin()) return
-
     try {
       await loginWithPassword(formData.email, formData.password)
       navigate({ to: '/dashboard' })
-    } catch (err) {
-      console.error('Password login failed:', err)
-    }
+    } catch {}
   }
 
   const handleResendOTP = async () => {
     try {
       setFormData((prev) => ({ ...prev, otp: '' }))
       clearError()
-
+      isSubmittingOtp.current = false
       await authService.resendOTP(formData.email)
-
       setTimeRemaining(OTP_TIMEOUT_SECONDS)
     } catch (err: any) {
-      const errorMessage =
-        err.response?.data?.message || 'Failed to resend OTP. Please try again.'
-
-      console.error('Failed to resend OTP:', errorMessage)
+      console.error(
+        err.response?.data?.message ||
+          'Failed to resend OTP. Please try again.',
+      )
     }
   }
 
   const handleWrongEmail = () => {
     setOtpSent(false)
     setTimeRemaining(OTP_TIMEOUT_SECONDS)
+    isSubmittingOtp.current = false
     setFormData((prev) => ({ ...prev, otp: '' }))
     clearError()
   }
@@ -201,6 +203,7 @@ function LoginPage() {
     setLoginMethod('password')
     setOtpSent(false)
     setShowPassword(false)
+    isSubmittingOtp.current = false
     setFormData((prev) => ({ ...prev, otp: '', password: '' }))
     setValidationErrors({})
     clearError()
@@ -210,16 +213,11 @@ function LoginPage() {
     setLoginMethod('otp')
     setOtpSent(false)
     setShowPassword(false)
+    isSubmittingOtp.current = false
     setFormData((prev) => ({ ...prev, otp: '', password: '' }))
     setValidationErrors({})
     clearError()
   }
-
-  useEffect(() => {
-    if (formData.otp.length === 6 && !isLoading && !isOtpExpired) {
-      handleVerifyOTP(new Event('submit') as any)
-    }
-  }, [formData.otp])
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4">
@@ -255,9 +253,7 @@ function LoginPage() {
                     placeholder="name@example.com"
                     value={formData.email}
                     onChange={handleChange}
-                    className={`w-full pl-10 pr-4 py-5 ${
-                      validationErrors.email ? 'border-red-500' : ''
-                    }`}
+                    className={`w-full pl-10 pr-4 py-5 ${validationErrors.email ? 'border-red-500' : ''}`}
                     aria-invalid={!!validationErrors.email}
                     disabled={isLoading}
                   />
@@ -388,9 +384,7 @@ function LoginPage() {
                     placeholder="name@example.com"
                     value={formData.email}
                     onChange={handleChange}
-                    className={`w-full pl-10 pr-4 py-5 ${
-                      validationErrors.email ? 'border-red-500' : ''
-                    }`}
+                    className={`w-full pl-10 pr-4 py-5 ${validationErrors.email ? 'border-red-500' : ''}`}
                     aria-invalid={!!validationErrors.email}
                     disabled={isLoading}
                   />
@@ -413,9 +407,7 @@ function LoginPage() {
                     placeholder="Enter your password"
                     value={formData.password}
                     onChange={handleChange}
-                    className={`w-full pl-10 pr-10 py-5 ${
-                      validationErrors.password ? 'border-red-500' : ''
-                    }`}
+                    className={`w-full pl-10 pr-10 py-5 ${validationErrors.password ? 'border-red-500' : ''}`}
                     aria-invalid={!!validationErrors.password}
                     disabled={isLoading}
                   />
@@ -447,12 +439,12 @@ function LoginPage() {
               </Button>
 
               <div className="text-center space-y-2">
-                <Link
-                  to="/"
-                  className="text-sm text-primary hover:underline block"
+                <button
+                  type="button"
+                  className="text-sm text-primary hover:underline block w-full"
                 >
                   Forgot password?
-                </Link>
+                </button>
                 <button
                   type="button"
                   onClick={switchToOTP}

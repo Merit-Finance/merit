@@ -10,7 +10,6 @@ interface AuthState {
   isLoading: boolean
   error: string | null
 
-  // Actions
   register: (payload: RegisterPayload) => Promise<void>
   sendOTP: (email: string) => Promise<void>
   verifyOTP: (email: string, otp: string) => Promise<void>
@@ -18,6 +17,17 @@ interface AuthState {
   logout: () => void
   clearError: () => void
   setUser: (user: User | null) => void
+}
+
+const setTokens = (accessToken: string, refreshToken: string) => {
+  localStorage.setItem('auth_token', accessToken)
+  localStorage.setItem('refresh_token', refreshToken)
+}
+
+const clearTokens = () => {
+  localStorage.removeItem('auth_token')
+  localStorage.removeItem('refresh_token')
+  localStorage.removeItem('auth-storage')
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -33,11 +43,8 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true, error: null })
         try {
           const response = await authService.register(payload)
-
           if (response.success && response.data) {
-            localStorage.setItem('auth_token', response.data.accessToken)
-            localStorage.setItem('refresh_token', response.data.refreshToken)
-
+            setTokens(response.data.accessToken, response.data.refreshToken)
             set({
               user: response.data.user,
               accessToken: response.data.accessToken,
@@ -47,12 +54,10 @@ export const useAuthStore = create<AuthState>()(
             })
           }
         } catch (error: any) {
-          const errorMessage =
-            error.response?.data?.message ||
-            'Registration failed. Please try again.'
-
           set({
-            error: errorMessage,
+            error:
+              error.response?.data?.message ||
+              'Registration failed. Please try again.',
             isLoading: false,
           })
           throw error
@@ -63,20 +68,16 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true, error: null })
         try {
           const response = await authService.sendOTP(email)
-
           if (!response.success) {
             throw new Error(response.message || 'Failed to send OTP')
           }
-
           set({ isLoading: false, error: null })
         } catch (error: any) {
-          const errorMessage =
-            error.response?.data?.message ||
-            error.message ||
-            'Failed to send OTP. Please try again.'
-
           set({
-            error: errorMessage,
+            error:
+              error.response?.data?.message ||
+              error.message ||
+              'Failed to send OTP. Please try again.',
             isLoading: false,
           })
           throw error
@@ -87,11 +88,8 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true, error: null })
         try {
           const response = await authService.verifyOTP(email, otp)
-
           if (response.success && response.data) {
-            localStorage.setItem('auth_token', response.data.accessToken)
-            localStorage.setItem('refresh_token', response.data.refreshToken)
-
+            setTokens(response.data.accessToken, response.data.refreshToken)
             set({
               user: response.data.user,
               accessToken: response.data.accessToken,
@@ -103,13 +101,11 @@ export const useAuthStore = create<AuthState>()(
             throw new Error(response.message || 'Invalid OTP')
           }
         } catch (error: any) {
-          const errorMessage =
-            error.response?.data?.message ||
-            error.message ||
-            'Invalid OTP. Please try again.'
-
           set({
-            error: errorMessage,
+            error:
+              error.response?.data?.message ||
+              error.message ||
+              'Invalid OTP. Please try again.',
             isLoading: false,
           })
           throw error
@@ -120,11 +116,8 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true, error: null })
         try {
           const response = await authService.loginWithPassword(email, password)
-
           if (response.success && response.data) {
-            localStorage.setItem('auth_token', response.data.accessToken)
-            localStorage.setItem('refresh_token', response.data.refreshToken)
-
+            setTokens(response.data.accessToken, response.data.refreshToken)
             set({
               user: response.data.user,
               accessToken: response.data.accessToken,
@@ -136,13 +129,11 @@ export const useAuthStore = create<AuthState>()(
             throw new Error(response.message || 'Login failed')
           }
         } catch (error: any) {
-          const errorMessage =
-            error.response?.data?.message ||
-            error.message ||
-            'Login failed. Please try again.'
-
           set({
-            error: errorMessage,
+            error:
+              error.response?.data?.message ||
+              error.message ||
+              'Login failed. Please try again.',
             isLoading: false,
           })
           throw error
@@ -150,12 +141,7 @@ export const useAuthStore = create<AuthState>()(
       },
 
       logout: () => {
-        // Clear localStorage
-        localStorage.removeItem('auth_token')
-        localStorage.removeItem('refresh_token')
-        localStorage.removeItem('auth-storage') // Clear persisted zustand state
-
-        // Clear zustand state
+        clearTokens()
         set({
           user: null,
           accessToken: null,
@@ -163,9 +149,6 @@ export const useAuthStore = create<AuthState>()(
           isLoading: false,
           error: null,
         })
-
-        // Redirect to login page
-        window.location.href = '/'
       },
 
       clearError: () => set({ error: null }),
