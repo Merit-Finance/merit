@@ -237,7 +237,7 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
 
             <button
               onClick={() => onOpenChange(false)}
-              className="w-full bg-gray-900 hover:bg-gray-700 text-white py-3 rounded-xl font-semibold text-sm transition-colors"
+              className="w-full flex cursor-pointer items-center justify-center gap-2 bg-primary hover:bg-primary-light text-white py-2.5 rounded-xl text-sm font-semibold transition-colors"
             >
               I've Sent the Payment
             </button>

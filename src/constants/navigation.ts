@@ -16,4 +16,9 @@ export const navItems = [
     path: '/referrals',
     icon: PeopleIcon,
   },
+  {
+    name: 'Matrix',
+    path: '/matrix',
+    icon: PeopleIcon,
+  },
 ] as const

@@ -1,5 +1,5 @@
 import apiClient from '@/lib/api-client'
-import { AuthResponse, OTPResponse, RegisterPayload } from '@/lib/auth'
+import { AuthResponse, ChangePasswordPayload, ChangePasswordResponse, OTPResponse, RegisterPayload } from '@/lib/auth'
 
 export const authService = {
   register: async (payload: RegisterPayload): Promise<AuthResponse> => {
@@ -42,6 +42,16 @@ export const authService = {
         email,
         password,
       },
+    )
+    return response.data
+  },
+
+  changePassword: async (
+    payload: ChangePasswordPayload,
+  ): Promise<ChangePasswordResponse> => {
+    const response = await apiClient.post<ChangePasswordResponse>(
+      '/auth/change-password',
+      payload,
     )
     return response.data
   },

@@ -18,7 +18,6 @@ export const Route = createFileRoute('/referrals')({
 function ReferralsPage() {
   const { referralList, referralStat, isLoading, fetchAll } = useReferralStore()
   const { userData, fetchUser } = useUserStore()
-  console.log('userdata', userData)
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {

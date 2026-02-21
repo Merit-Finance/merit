@@ -4,19 +4,30 @@ import { useBalanceStore } from '@/stores/balance.store'
 import { useUserStore } from '@/stores/user.store'
 import { useEffect, useState } from 'react'
 import { WithdrawDialog } from '@/components/WithdrawDialog'
-import { ArrowDownCircle, DollarSign, History } from 'lucide-react'
-import { Transaction, transactionService } from '@/services/transaction.service'
+import {
+  ArrowDownCircle,
+  DollarSign,
+  History,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react'
+import { transactionService } from '@/services/transaction.service'
+import { Transaction, TransactionMeta } from '@/lib/transaction'
 
 export const Route = createFileRoute('/dashboard')({
   component: DashboardPage,
 })
+
+const TX_LIMIT = 10
 
 function DashboardPage() {
   const { mainBalance, isLoading, error, fetchMainBalance } = useBalanceStore()
   const { userData, fetchUser } = useUserStore()
   const [withdrawOpen, setWithdrawOpen] = useState(false)
   const [transactions, setTransactions] = useState<Transaction[]>([])
+  const [txMeta, setTxMeta] = useState<TransactionMeta | null>(null)
   const [txLoading, setTxLoading] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -28,8 +39,14 @@ function DashboardPage() {
     const fetchTransactions = async () => {
       setTxLoading(true)
       try {
-        const response = await transactionService.getTransactions()
-        if (response.success) setTransactions(response.data)
+        const response = await transactionService.getTransactions({
+          page: currentPage,
+          limit: TX_LIMIT,
+        })
+        if (response.success) {
+          setTransactions(response.data)
+          setTxMeta(response.meta)
+        }
       } catch (error) {
         console.error('Failed to fetch transactions')
       } finally {
@@ -37,7 +54,7 @@ function DashboardPage() {
       }
     }
     fetchTransactions()
-  }, [])
+  }, [currentPage])
 
   const formatBalance = (balance: number | null) => {
     if (balance === null) return '0.00'
@@ -53,6 +70,10 @@ function DashboardPage() {
       .toLowerCase()
       .replace(/\b\w/g, (c) => c.toUpperCase())
   }
+
+  const totalPages = txMeta?.totalPages ?? 1
+  const hasPrev = currentPage > 1
+  const hasNext = currentPage < totalPages
 
   return (
     <div className="max-w-4xl mx-auto w-full space-y-4 sm:space-y-6">
@@ -146,14 +167,19 @@ function DashboardPage() {
       </section>
 
       <section className="bg-white rounded-2xl p-4 sm:p-6 border border-[#E8E8E8]">
-        <h3 className="text-gray-900 font-semibold mb-5 flex items-center gap-2">
-          <History className="w-4 h-4 text-gray-500" />
-          Transaction History
-        </h3>
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="text-gray-900 font-semibold flex items-center gap-2">
+            <History className="w-4 h-4 text-gray-500" />
+            Transaction History
+          </h3>
+          {txMeta && txMeta.total > 0 && (
+            <span className="text-xs text-gray-400">{txMeta.total} total</span>
+          )}
+        </div>
 
         {txLoading ? (
           <div className="space-y-3">
-            {[1, 2, 3].map((i) => (
+            {Array.from({ length: TX_LIMIT }).map((_, i) => (
               <div
                 key={i}
                 className="h-16 bg-gray-100 rounded-xl animate-pulse"
@@ -166,68 +192,96 @@ function DashboardPage() {
             <p className="text-gray-400 text-sm">No transactions yet.</p>
           </div>
         ) : (
-          <div className="space-y-3">
-            {transactions.map((tx) => (
-              <div
-                key={tx.id}
-                className="flex items-center justify-between p-3 sm:p-4 border border-[#E8E8E8] rounded-xl gap-3"
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div
-                    className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
-                      tx.direction === 'CREDIT' ? 'bg-green-50' : 'bg-red-50'
-                    }`}
-                  >
-                    {tx.direction === 'CREDIT' ? (
-                      <DollarSign className="w-4 h-4 text-green-500" />
-                    ) : (
-                      <ArrowDownCircle className="w-4 h-4 text-red-400" />
-                    )}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-gray-900 font-medium text-sm truncate">
-                      {formatSource(tx.source)}
-                    </p>
-                    <p className="text-gray-400 text-xs">
-                      {new Date(tx.createdAt).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex flex-col items-end gap-1 shrink-0">
-                  <span
-                    className={`text-sm font-semibold ${
-                      tx.direction === 'CREDIT'
-                        ? 'text-green-500'
-                        : 'text-red-500'
-                    }`}
-                  >
-                    {tx.direction === 'CREDIT' ? '+' : '-'}$
-                    {parseFloat(tx.amount).toFixed(2)}
-                  </span>
-                  <div className="flex items-center gap-1">
-                    <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-blue-50 text-blue-500">
-                      {tx.network}
-                    </span>
-                    <span
-                      className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${
-                        tx.status === 'COMPLETED'
-                          ? 'bg-gray-900 text-white'
-                          : tx.status === 'PENDING'
-                            ? 'bg-yellow-100 text-yellow-700'
-                            : 'bg-red-100 text-red-600'
+          <>
+            <div className="space-y-3">
+              {transactions.map((tx) => (
+                <div
+                  key={tx.id}
+                  className="flex items-center justify-between p-3 sm:p-4 border border-[#E8E8E8] rounded-xl gap-3"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div
+                      className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
+                        tx.direction === 'CREDIT' ? 'bg-green-50' : 'bg-red-50'
                       }`}
                     >
-                      {tx.status.toLowerCase()}
+                      {tx.direction === 'CREDIT' ? (
+                        <DollarSign className="w-4 h-4 text-green-500" />
+                      ) : (
+                        <ArrowDownCircle className="w-4 h-4 text-red-400" />
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-gray-900 font-medium text-sm truncate">
+                        {formatSource(tx.source)}
+                      </p>
+                      <p className="text-gray-400 text-xs">
+                        {new Date(tx.createdAt).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end gap-1 shrink-0">
+                    <span
+                      className={`text-sm font-semibold ${
+                        tx.direction === 'CREDIT'
+                          ? 'text-green-500'
+                          : 'text-red-500'
+                      }`}
+                    >
+                      {tx.direction === 'CREDIT' ? '+' : '-'}$
+                      {parseFloat(tx.amount).toFixed(2)}
                     </span>
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-blue-50 text-blue-500">
+                        {tx.network}
+                      </span>
+                      <span
+                        className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${
+                          tx.status === 'COMPLETED'
+                            ? 'bg-gray-900 text-white'
+                            : tx.status === 'PENDING'
+                              ? 'bg-yellow-100 text-yellow-700'
+                              : 'bg-red-100 text-red-600'
+                        }`}
+                      >
+                        {tx.status.toLowerCase()}
+                      </span>
+                    </div>
                   </div>
                 </div>
+              ))}
+            </div>
+
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between mt-5 pt-4 border-t border-[#E8E8E8]">
+                <button
+                  onClick={() => setCurrentPage((p) => p - 1)}
+                  disabled={!hasPrev || txLoading}
+                  className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-600 border border-[#E8E8E8] rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  Previous
+                </button>
+
+                <span className="text-sm text-gray-500">
+                  Page {currentPage} of {totalPages}
+                </span>
+
+                <button
+                  onClick={() => setCurrentPage((p) => p + 1)}
+                  disabled={!hasNext || txLoading}
+                  className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-600 border border-[#E8E8E8] rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  Next
+                  <ChevronRight className="w-4 h-4" />
+                </button>
               </div>
-            ))}
-          </div>
+            )}
+          </>
         )}
       </section>
 

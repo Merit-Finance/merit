@@ -1,5 +1,6 @@
 import { create } from 'zustand'
-import { userService, UserData } from '@/services/users.service'
+import { userService } from '@/services/users.service'
+import { UserData } from '@/lib/user'
 
 interface UserState {
   userData: UserData | null

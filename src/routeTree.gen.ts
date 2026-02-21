@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ReferralsRouteImport } from './routes/referrals'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as MatrixRouteImport } from './routes/matrix'
 import { Route as EarningsRouteImport } from './routes/earnings'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
@@ -29,6 +30,11 @@ const ReferralsRoute = ReferralsRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MatrixRoute = MatrixRouteImport.update({
+  id: '/matrix',
+  path: '/matrix',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EarningsRoute = EarningsRouteImport.update({
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/earnings': typeof EarningsRoute
+  '/matrix': typeof MatrixRoute
   '/profile': typeof ProfileRoute
   '/referrals': typeof ReferralsRoute
   '/signup': typeof SignupRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/earnings': typeof EarningsRoute
+  '/matrix': typeof MatrixRoute
   '/profile': typeof ProfileRoute
   '/referrals': typeof ReferralsRoute
   '/signup': typeof SignupRoute
@@ -68,6 +76,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/earnings': typeof EarningsRoute
+  '/matrix': typeof MatrixRoute
   '/profile': typeof ProfileRoute
   '/referrals': typeof ReferralsRoute
   '/signup': typeof SignupRoute
@@ -78,16 +87,25 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/earnings'
+    | '/matrix'
     | '/profile'
     | '/referrals'
     | '/signup'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/earnings' | '/profile' | '/referrals' | '/signup'
+  to:
+    | '/'
+    | '/dashboard'
+    | '/earnings'
+    | '/matrix'
+    | '/profile'
+    | '/referrals'
+    | '/signup'
   id:
     | '__root__'
     | '/'
     | '/dashboard'
     | '/earnings'
+    | '/matrix'
     | '/profile'
     | '/referrals'
     | '/signup'
@@ -97,6 +115,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   EarningsRoute: typeof EarningsRoute
+  MatrixRoute: typeof MatrixRoute
   ProfileRoute: typeof ProfileRoute
   ReferralsRoute: typeof ReferralsRoute
   SignupRoute: typeof SignupRoute
@@ -123,6 +142,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/matrix': {
+      id: '/matrix'
+      path: '/matrix'
+      fullPath: '/matrix'
+      preLoaderRoute: typeof MatrixRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/earnings': {
@@ -153,6 +179,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   EarningsRoute: EarningsRoute,
+  MatrixRoute: MatrixRoute,
   ProfileRoute: ProfileRoute,
   ReferralsRoute: ReferralsRoute,
   SignupRoute: SignupRoute,

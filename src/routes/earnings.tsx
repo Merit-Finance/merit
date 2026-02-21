@@ -198,6 +198,10 @@ function EarningsPage() {
 
   return (
     <div className="max-w-7xl mx-auto w-full space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Earinings</h1>
+        <p className="text-gray-500 text-sm mt-1">Track your earnings</p>
+      </div>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
         {earningsStats.map((stat) => (
           <div

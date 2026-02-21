@@ -1,5 +1,5 @@
 import apiClient from '@/lib/api-client'
-import { BalanceResponse, BalanceStatResponse } from '@/lib/auth'
+import { BalanceResponse, BalanceStatResponse } from '@/lib/balance'
 
 export const balanceService = {
   getMainBalance: async (): Promise<BalanceResponse> => {

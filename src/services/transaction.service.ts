@@ -1,36 +1,27 @@
 import apiClient from '@/lib/api-client'
-
-export type TransactionDirection = 'CREDIT' | 'DEBIT'
-export type TransactionStatus = 'PENDING' | 'COMPLETED' | 'FAILED'
-export type TransactionSource =
-  | 'DIRECT_DEPOSIT'
-  | 'LEVEL_UPGRADE'
-  | 'REFERRAL_BONUS'
-  | 'WITHDRAWAL'
-
-export interface Transaction {
-  id: string
-  balanceId: string
-  amount: string
-  direction: TransactionDirection
-  source: TransactionSource
-  network: string
-  referenceId: string
-  createdAt: string
-  status: TransactionStatus
-}
-
-export interface TransactionListResponse {
-  success: boolean
-  message: string
-  data: Transaction[]
-  statusCode: number
-}
+import {
+  GetTransactionsParams,
+  TransactionListResponse,
+  WithdrawPayload,
+  WithdrawResponse,
+} from '@/lib/transaction'
 
 export const transactionService = {
-  getTransactions: async (): Promise<TransactionListResponse> => {
+  getTransactions: async (
+    params: GetTransactionsParams = {},
+  ): Promise<TransactionListResponse> => {
+    const { page = 1, limit = 10 } = params
     const response = await apiClient.get<TransactionListResponse>(
       '/balance/transaction',
+      { params: { page, limit } },
+    )
+    return response.data
+  },
+
+  withdraw: async (payload: WithdrawPayload): Promise<WithdrawResponse> => {
+    const response = await apiClient.post<WithdrawResponse>(
+      '/transaction/withdraw',
+      payload,
     )
     return response.data
   },
