@@ -4,6 +4,9 @@ import Header from '@/components/Header'
 import '../styles.css'
 import type { QueryClient } from '@tanstack/react-query'
 import Footer from '@/components/Footer'
+import { useAuthStore } from '@/stores/auth.stores'
+import { useEffect } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -17,7 +20,18 @@ const AUTH_ROUTES = ['/', '/signup']
 
 function RootComponent() {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
+  const { user } = useAuthStore()
+  const navigate = useNavigate()
   const isAuthRoute = AUTH_ROUTES.includes(pathname)
+
+  useEffect(() => {
+    if (!user && !isAuthRoute) {
+      navigate({ to: '/' })
+    }
+    if (user && isAuthRoute) {
+      navigate({ to: '/dashboard' })
+    }
+  }, [user, pathname])
 
   return (
     <div className="flex min-h-screen flex-col">

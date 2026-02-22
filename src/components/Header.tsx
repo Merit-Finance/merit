@@ -29,15 +29,30 @@ export default function Header() {
     <>
       <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
         <div className="px-4 sm:px-6 py-3 flex items-center justify-between max-w-[1400px] mx-auto">
-          <Link
-            to="/dashboard"
-            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-          >
-            <MeritLogo className="h-6 w-6 sm:h-8 sm:w-8 text-[#008FE9]" />
-            <span className="text-lg sm:text-xl font-semibold text-primary">
-              Merit Finance
-            </span>
-          </Link>
+          {/* Left side: hamburger (mobile) + logo */}
+          <div className="flex items-center gap-2">
+            {isAuthenticated && (
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                {mobileMenuOpen ? (
+                  <X className="w-5 h-5 text-gray-700" />
+                ) : (
+                  <Menu className="w-5 h-5 text-gray-700" />
+                )}
+              </button>
+            )}
+            <Link
+              to="/dashboard"
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            >
+              <MeritLogo className="h-6 w-6 sm:h-8 sm:w-8 text-[#008FE9]" />
+              <span className="text-lg sm:text-xl font-semibold text-primary">
+                Merit Finance
+              </span>
+            </Link>
+          </div>
 
           {isAuthenticated && (
             <>
@@ -75,6 +90,7 @@ export default function Header() {
                   )
                 })}
               </nav>
+
               {/* Desktop Right */}
               <div className="hidden lg:flex items-center gap-4">
                 <div className="relative group">
@@ -131,21 +147,11 @@ export default function Header() {
                 </button>
               </div>
 
-              {/* Mobile Right */}
-              <div className="flex lg:hidden items-center gap-2">
+              {/* Mobile Right — bell only */}
+              <div className="flex lg:hidden items-center">
                 <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors relative">
                   <Bell className="w-5 h-5 text-gray-600" />
                   <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
-                </button>
-                <button
-                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  {mobileMenuOpen ? (
-                    <X className="w-5 h-5 text-gray-700" />
-                  ) : (
-                    <Menu className="w-5 h-5 text-gray-700" />
-                  )}
                 </button>
               </div>
             </>
@@ -153,7 +159,7 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Mobile Menu Drawer */}
+      {/* Mobile Menu Drawer — slides from the LEFT */}
       {isAuthenticated && (
         <>
           {/* Backdrop */}
@@ -166,8 +172,8 @@ export default function Header() {
 
           {/* Drawer */}
           <div
-            className={`fixed top-0 right-0 h-full w-72 bg-white z-50 shadow-2xl transform transition-transform duration-300 ease-in-out lg:hidden ${
-              mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+            className={`fixed top-0 left-0 h-full w-72 bg-white z-50 shadow-2xl transform transition-transform duration-300 ease-in-out lg:hidden ${
+              mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
             }`}
           >
             {/* Drawer Header */}
