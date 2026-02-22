@@ -575,9 +575,7 @@ function LoginPage() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      {/* ── Mobile ── */}
       <div className="flex flex-col flex-1 lg:hidden">
-        {/* Compact mobile hero */}
         <div className="relative bg-gray-900 px-6 pt-10 pb-8 overflow-hidden shrink-0">
           <div className="absolute -top-20 -right-20 w-56 h-56 rounded-full bg-primary/15 blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 -left-10 w-40 h-40 rounded-full bg-primary/10 blur-2xl pointer-events-none" />
@@ -626,10 +624,8 @@ function LoginPage() {
         </div>
       </div>
 
-      {/* ── Desktop ── */}
       <div className="hidden lg:flex h-screen overflow-hidden">
-        {/* Left panel — fixed height, no scroll */}
-        <div className="w-[46%] bg-gray-900 flex flex-col justify-between py-10 px-12 relative overflow-hidden shrink-0">
+        <div className="w-[46%] bg-gray-900 flex flex-col justify-between py-8 px-12 relative overflow-hidden shrink-0">
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl" />
             <div className="absolute bottom-0 right-0 w-80 h-80 rounded-full bg-primary/8 blur-3xl" />
@@ -643,7 +639,6 @@ function LoginPage() {
             />
           </div>
 
-          {/* Logo */}
           <div className="relative z-10 flex items-center gap-2.5">
             <MeritLogo className="h-6 w-6 text-[#008FE9]" />
             <span className="text-white font-semibold text-lg">
@@ -651,8 +646,7 @@ function LoginPage() {
             </span>
           </div>
 
-          {/* Main content */}
-          <div className="relative z-10 space-y-6">
+          <div className="relative z-10 space-y-5">
             <div>
               <div className="inline-flex items-center gap-2 bg-white/8 border border-white/12 rounded-full px-3 py-1 mb-4">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
@@ -673,7 +667,6 @@ function LoginPage() {
               </p>
             </div>
 
-            {/* Stats — 2×2 compact grid */}
             <div className="grid grid-cols-2 gap-2.5">
               {STATS.map(({ icon: Icon, value, label }) => (
                 <div
@@ -689,32 +682,26 @@ function LoginPage() {
               ))}
             </div>
 
-            {/* Testimonial — compact */}
-            <div className="bg-white/5 border border-white/8 rounded-xl p-4">
-              <div className="flex gap-3 items-start">
-                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0 text-primary font-bold text-sm">
-                  J
-                </div>
-                <div>
-                  <p className="text-white/60 text-xs leading-relaxed">
-                    "Hit Level 3 in two weeks. Payouts land same day, every
-                    time."
-                  </p>
-                  <p className="text-white/25 text-xs mt-1.5">
-                    James O. · Level 3 Member
-                  </p>
-                </div>
+            <div className="flex gap-3 items-center">
+              <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0 text-primary font-bold text-sm">
+                J
+              </div>
+              <div>
+                <p className="text-white/50 text-xs leading-relaxed">
+                  "Hit Level 3 in two weeks. Payouts land same day, every time."
+                </p>
+                <p className="text-white/25 text-xs mt-0.5">
+                  James O. · Level 3 Member
+                </p>
               </div>
             </div>
           </div>
 
-          {/* Ticker pinned to bottom */}
           <div className="relative z-10">
             <Ticker dark={true} />
           </div>
         </div>
 
-        {/* Right panel — scrollable if needed */}
         <div className="flex-1 flex items-center justify-center px-16 bg-white overflow-y-auto">
           <div className="w-full max-w-sm">
             <div className="mb-8">

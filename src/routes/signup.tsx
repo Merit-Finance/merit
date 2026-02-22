@@ -311,7 +311,7 @@ function SignupPage() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <div className="flex flex-col flex-1 lg:hidden">
-        <div className="relative bg-gray-900 px-6 pt-14 pb-10 overflow-hidden shrink-0">
+        <div className="relative bg-gray-900 px-6 pt-10 pb-8 overflow-hidden shrink-0">
           <div className="absolute -top-20 -right-20 w-56 h-56 rounded-full bg-primary/15 blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 -left-10 w-40 h-40 rounded-full bg-primary/10 blur-2xl pointer-events-none" />
           <div
@@ -323,16 +323,14 @@ function SignupPage() {
             }}
           />
           <div className="relative z-10">
-            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/15 rounded-full px-3 py-1 mb-5">
+            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/15 rounded-full px-3 py-1 mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
               <span className="text-white/70 text-xs">Join the network</span>
             </div>
-            <h1 className="text-4xl font-bold text-white leading-tight tracking-tight">
-              Start earning
-              <br />
-              <span className="text-primary">from day one.</span>
+            <h1 className="text-3xl font-bold text-white leading-tight tracking-tight">
+              Start earning <span className="text-primary">from day one.</span>
             </h1>
-            <div className="flex gap-6 mt-5">
+            <div className="flex gap-5 mt-4">
               {[
                 { v: 'Free', l: 'To Join' },
                 { v: '12K+', l: 'Members' },
@@ -360,8 +358,8 @@ function SignupPage() {
         </div>
       </div>
 
-      <div className="hidden lg:flex flex-1">
-        <div className="w-[48%] bg-gray-900 flex flex-col justify-between p-16 relative overflow-hidden shrink-0">
+      <div className="hidden lg:flex h-screen overflow-hidden">
+        <div className="w-[46%] bg-gray-900 flex flex-col justify-between py-8 px-12 relative overflow-hidden shrink-0">
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl" />
             <div className="absolute bottom-0 right-0 w-80 h-80 rounded-full bg-primary/8 blur-3xl" />
@@ -376,24 +374,24 @@ function SignupPage() {
           </div>
 
           <div className="relative z-10 flex items-center gap-2.5">
-            <MeritLogo className="h-6 w-6 sm:h-8 sm:w-8 text-[#008FE9]" />
+            <MeritLogo className="h-6 w-6 text-[#008FE9]" />
             <span className="text-white font-semibold text-lg">
               Merit Finance
             </span>
           </div>
 
-          <div className="relative z-10 space-y-6">
+          <div className="relative z-10 space-y-5">
             <div>
-              <div className="inline-flex items-center gap-2 bg-white/8 border border-white/12 rounded-full px-3 py-1 mb-6">
+              <div className="inline-flex items-center gap-2 bg-white/8 border border-white/12 rounded-full px-3 py-1 mb-4">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
                 <span className="text-white/60 text-xs">Join the network</span>
               </div>
-              <h1 className="text-5xl font-bold text-white leading-[1.1] tracking-tight">
+              <h1 className="text-4xl font-bold text-white leading-[1.1] tracking-tight">
                 Start earning
                 <br />
                 <span className="text-primary">from day one.</span>
               </h1>
-              <p className="text-white/35 mt-4 text-sm leading-relaxed max-w-xs">
+              <p className="text-white/35 mt-3 text-sm leading-relaxed max-w-xs">
                 Create your account in minutes. Unlock your first level and
                 start building your earnings network today.
               </p>
@@ -417,12 +415,14 @@ function SignupPage() {
                   desc: 'Refer members and earn on every level',
                 },
               ].map(({ step, title, desc }) => (
-                <div key={step} className="flex gap-4 items-start">
-                  <span className="text-xs font-bold text-primary/60 mt-0.5 w-6 shrink-0">
+                <div key={step} className="flex gap-3 items-start">
+                  <span className="text-xs font-bold text-primary/60 mt-0.5 w-5 shrink-0">
                     {step}
                   </span>
                   <div>
-                    <p className="text-white text-sm font-semibold">{title}</p>
+                    <p className="text-white text-sm font-semibold leading-none">
+                      {title}
+                    </p>
                     <p className="text-white/30 text-xs mt-0.5">{desc}</p>
                   </div>
                 </div>
@@ -435,8 +435,8 @@ function SignupPage() {
           </div>
         </div>
 
-        <div className="flex-1 flex items-center justify-center px-10 bg-white overflow-y-auto">
-          <div className="w-full max-w-sm py-6">
+        <div className="flex-1 flex items-start justify-center px-10 bg-white overflow-y-auto">
+          <div className="w-full max-w-sm py-10">
             <div className="mb-5">
               <h2 className="text-2xl font-bold text-gray-900">
                 Create account
