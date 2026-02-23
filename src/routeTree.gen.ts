@@ -10,9 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ReferralsRouteImport } from './routes/referrals'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as MatrixRouteImport } from './routes/matrix'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as EarningsRouteImport } from './routes/earnings'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
@@ -20,6 +22,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReferralsRoute = ReferralsRouteImport.update({
@@ -35,6 +42,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const MatrixRoute = MatrixRouteImport.update({
   id: '/matrix',
   path: '/matrix',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EarningsRoute = EarningsRouteImport.update({
@@ -57,18 +69,22 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/earnings': typeof EarningsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/matrix': typeof MatrixRoute
   '/profile': typeof ProfileRoute
   '/referrals': typeof ReferralsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/earnings': typeof EarningsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/matrix': typeof MatrixRoute
   '/profile': typeof ProfileRoute
   '/referrals': typeof ReferralsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
 }
 export interface FileRoutesById {
@@ -76,9 +92,11 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/earnings': typeof EarningsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/matrix': typeof MatrixRoute
   '/profile': typeof ProfileRoute
   '/referrals': typeof ReferralsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
 }
 export interface FileRouteTypes {
@@ -87,27 +105,33 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/earnings'
+    | '/forgot-password'
     | '/matrix'
     | '/profile'
     | '/referrals'
+    | '/reset-password'
     | '/signup'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/dashboard'
     | '/earnings'
+    | '/forgot-password'
     | '/matrix'
     | '/profile'
     | '/referrals'
+    | '/reset-password'
     | '/signup'
   id:
     | '__root__'
     | '/'
     | '/dashboard'
     | '/earnings'
+    | '/forgot-password'
     | '/matrix'
     | '/profile'
     | '/referrals'
+    | '/reset-password'
     | '/signup'
   fileRoutesById: FileRoutesById
 }
@@ -115,9 +139,11 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   EarningsRoute: typeof EarningsRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   MatrixRoute: typeof MatrixRoute
   ProfileRoute: typeof ProfileRoute
   ReferralsRoute: typeof ReferralsRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
 }
 
@@ -128,6 +154,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/referrals': {
@@ -149,6 +182,13 @@ declare module '@tanstack/react-router' {
       path: '/matrix'
       fullPath: '/matrix'
       preLoaderRoute: typeof MatrixRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/earnings': {
@@ -179,9 +219,11 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   EarningsRoute: EarningsRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   MatrixRoute: MatrixRoute,
   ProfileRoute: ProfileRoute,
   ReferralsRoute: ReferralsRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
 }
 export const routeTree = rootRouteImport

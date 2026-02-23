@@ -149,14 +149,14 @@ function DashboardPage() {
               Your Referral Link
             </h3>
             <p className="text-gray-500 text-sm truncate">
-              https://meritfinance.com/register/
+              https://meritfinance.org/signup/
               {userData?.referralCode ?? '...'}
             </p>
           </div>
           <button
             onClick={() =>
               navigator.clipboard.writeText(
-                `https://meritfinance.com/register/${userData?.referralCode}`,
+                `https://app.meritfinance.org/${userData?.referralCode}`,
               )
             }
             className="bg-[#EDF1FF] cursor-pointer p-3 rounded-full transition-all shrink-0"

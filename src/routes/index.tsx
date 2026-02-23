@@ -291,12 +291,12 @@ function TheForm({
               >
                 Password
               </Label>
-              <button
-                type="button"
-                className="text-xs text-primary hover:underline"
+              <Link
+                to="/forgot-password"
+                className="text-primary font-semibold hover:underline"
               >
                 Forgot password?
-              </button>
+              </Link>
             </div>
             <div className="relative">
               <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />

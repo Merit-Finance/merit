@@ -61,4 +61,18 @@ export const authService = {
     )
     return response.data
   },
+
+  resetPassword: async (email: string): Promise<OTPResponse> => {
+    const response = await apiClient.post<OTPResponse>('/auth/reset-password', {
+      email,
+    })
+    return response.data
+  },
+
+  confirmResetPassword: async (
+    token: string,
+    newPassword: string,
+  ): Promise<void> => {
+    await apiClient.post('/auth/reset-password/confirm', { token, newPassword })
+  },
 }

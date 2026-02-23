@@ -16,7 +16,7 @@ export const Route = createRootRoute<MyRouterContext>({
   component: RootComponent,
 })
 
-const AUTH_ROUTES = ['/', '/signup']
+const AUTH_ROUTES = ['/', '/signup', '/forgot-password', '/reset-password']
 
 function RootComponent() {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
