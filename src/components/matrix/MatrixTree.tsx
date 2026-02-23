@@ -10,7 +10,7 @@ interface MatrixTreeProps {
 
 export function MatrixTree({ matrixData, loading, error }: MatrixTreeProps) {
   return (
-    <div className="bg-white rounded-2xl border border-[#E8E8E8] p-6 overflow-x-auto">
+    <div className="bg-white rounded-2xl border border-[#E8E8E8] p-4 sm:p-6">
       <div className="mb-6">
         <p className="text-sm font-semibold text-gray-900">
           Complete Matrix Tree
@@ -33,15 +33,20 @@ export function MatrixTree({ matrixData, loading, error }: MatrixTreeProps) {
           <p className="text-red-400 text-sm">{error}</p>
         </div>
       ) : matrixData ? (
-        <div className="flex flex-col items-center min-w-[480px]">
-          <MatrixNodeCard node={matrixData} isRoot />
-          {matrixData.children && matrixData.children.length > 0 && (
-            <MatrixLevel
-              nodes={matrixData.children}
-              level={1}
-              parentKey={matrixData.id ?? 'root'}
-            />
-          )}
+        <div className="w-full overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 pb-2">
+          <div
+            className="flex flex-col items-center"
+            style={{ minWidth: 'max-content' }}
+          >
+            <MatrixNodeCard node={matrixData} isRoot />
+            {matrixData.children && matrixData.children.length > 0 && (
+              <MatrixLevel
+                nodes={matrixData.children}
+                level={1}
+                parentKey={matrixData.id ?? 'root'}
+              />
+            )}
+          </div>
         </div>
       ) : null}
     </div>
