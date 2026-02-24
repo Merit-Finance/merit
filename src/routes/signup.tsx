@@ -4,18 +4,20 @@ import {
   Lock,
   Mail,
   MapPin,
-  Phone,
   User,
   Eye,
   EyeOff,
   ArrowRight,
+  Tag,
 } from 'lucide-react'
 import { useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { PhoneInput } from '@/components/ui/phone-input'
 import { RegisterPayload } from '@/lib/auth'
 import { useAuthStore } from '@/stores/auth.stores'
+import { RegistrationSuccessModal } from '@/components/registration-success-modal'
 
 export const Route = createFileRoute('/signup')({
   component: SignupPage,
@@ -58,6 +60,9 @@ function SignupPage() {
   const navigate = useNavigate()
   const { register, isLoading, error, clearError } = useAuthStore()
 
+  const referralCodeFromUrl =
+    new URLSearchParams(window.location.search).get('ref') ?? ''
+
   const [formData, setFormData] = useState({
     name: '',
     phoneNumber: '',
@@ -66,12 +71,14 @@ function SignupPage() {
     password: '',
     confirmPassword: '',
     userName: '',
+    referralCode: referralCodeFromUrl,
   })
   const [validationErrors, setValidationErrors] = useState<
     Record<string, string>
   >({})
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -85,20 +92,27 @@ function SignupPage() {
     if (error) clearError()
   }
 
+  const handlePhoneChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, phoneNumber: value }))
+    if (validationErrors.phoneNumber)
+      setValidationErrors((prev) => {
+        const n = { ...prev }
+        delete n.phoneNumber
+        return n
+      })
+    if (error) clearError()
+  }
+
   const validateForm = (): boolean => {
     const errors: Record<string, string> = {}
     if (!formData.name.trim()) errors.name = 'Full name is required'
+    if (!formData.userName.trim()) errors.userName = 'Username is required'
     if (!formData.phoneNumber.trim())
       errors.phoneNumber = 'Phone number is required'
-    else if (
-      !/^\+?[1-9]\d{1,14}$/.test(formData.phoneNumber.replace(/\s/g, ''))
-    )
-      errors.phoneNumber = 'Enter a valid phone number'
+    if (!formData.address.trim()) errors.address = 'Address is required'
     if (!formData.email.trim()) errors.email = 'Email is required'
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
       errors.email = 'Enter a valid email'
-    if (!formData.address.trim()) errors.address = 'Address is required'
-    if (!formData.userName.trim()) errors.userName = 'Username is required'
     if (!formData.password) errors.password = 'Password is required'
     else if (formData.password.length < 6)
       errors.password = 'Password must be at least 6 characters'
@@ -122,15 +136,18 @@ function SignupPage() {
         password: formData.password,
         userName: formData.userName,
         role: 'INVESTOR',
+        ...(formData.referralCode
+          ? { referralCode: formData.referralCode }
+          : {}),
       }
       await register(payload)
-      navigate({ to: '/' })
+      setShowSuccessModal(true)
     } catch (err) {
       console.error('Registration failed:', err)
     }
   }
 
-  const fields = [
+  const textFields = [
     {
       name: 'name',
       placeholder: 'Full name',
@@ -144,13 +161,6 @@ function SignupPage() {
       type: 'text',
       icon: User,
       label: 'Username',
-    },
-    {
-      name: 'phoneNumber',
-      placeholder: 'Phone number',
-      type: 'tel',
-      icon: Phone,
-      label: 'Phone Number',
     },
     {
       name: 'email',
@@ -176,7 +186,8 @@ function SignupPage() {
         </div>
       )}
       <form onSubmit={handleSubmit} className="space-y-3.5">
-        {fields.map(({ name, placeholder, type, icon: Icon, label }) => (
+        {/* Text fields */}
+        {textFields.map(({ name, placeholder, type, icon: Icon, label }) => (
           <div key={name}>
             <Label
               htmlFor={name}
@@ -205,6 +216,32 @@ function SignupPage() {
           </div>
         ))}
 
+        {/* Phone number with country code */}
+        <div>
+          <Label
+            htmlFor="phoneNumber"
+            className="text-xs font-semibold text-gray-500 uppercase tracking-wider"
+          >
+            Phone Number
+          </Label>
+          <div className="mt-1.5">
+            <PhoneInput
+              value={formData.phoneNumber}
+              onChange={handlePhoneChange}
+              disabled={isLoading}
+              hasError={!!validationErrors.phoneNumber}
+              placeholder="Phone number"
+              defaultCountry="NG"
+            />
+          </div>
+          {validationErrors.phoneNumber && (
+            <p className="text-xs text-red-500 mt-1">
+              {validationErrors.phoneNumber}
+            </p>
+          )}
+        </div>
+
+        {/* Password */}
         <div>
           <Label
             htmlFor="password"
@@ -213,7 +250,7 @@ function SignupPage() {
             Password
           </Label>
           <div className="relative mt-1.5">
-            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
+            <Lock className="absolute cursor-pointer left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
             <Input
               id="password"
               name="password"
@@ -227,7 +264,7 @@ function SignupPage() {
             <button
               type="button"
               onClick={() => setShowPassword((p) => !p)}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors z-10"
+              className="absolute cursor-pointer right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors z-10"
             >
               {showPassword ? (
                 <EyeOff className="w-4 h-4" />
@@ -243,6 +280,7 @@ function SignupPage() {
           )}
         </div>
 
+        {/* Confirm Password */}
         <div>
           <Label
             htmlFor="confirmPassword"
@@ -265,7 +303,7 @@ function SignupPage() {
             <button
               type="button"
               onClick={() => setShowConfirmPassword((p) => !p)}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors z-10"
+              className="absolute cursor-pointer right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors z-10"
             >
               {showConfirmPassword ? (
                 <EyeOff className="w-4 h-4" />
@@ -281,11 +319,44 @@ function SignupPage() {
           )}
         </div>
 
+        {/* Referral Code — only shown if present in URL (read-only) or always visible for manual entry */}
+        <div>
+          <Label
+            htmlFor="referralCode"
+            className="text-xs font-semibold text-gray-500 uppercase tracking-wider"
+          >
+            Referral Code{' '}
+            {!referralCodeFromUrl && (
+              <span className="normal-case font-normal text-gray-400">
+                (optional)
+              </span>
+            )}
+          </Label>
+          <div className="relative mt-1.5">
+            <Tag className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
+            <Input
+              id="referralCode"
+              name="referralCode"
+              type="text"
+              placeholder="Referral code"
+              value={formData.referralCode}
+              onChange={handleChange}
+              disabled={isLoading || !!referralCodeFromUrl}
+              className={`pl-10 py-5 ${referralCodeFromUrl ? 'bg-gray-50 text-gray-500 cursor-not-allowed' : ''}`}
+            />
+            {referralCodeFromUrl && (
+              <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-green-600 font-medium">
+                Applied ✓
+              </span>
+            )}
+          </div>
+        </div>
+
         <div className="pt-1">
           <Button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-primary hover:bg-primary-light text-white py-5 rounded-xl font-semibold flex items-center justify-center gap-2"
+            className="w-full cursor-pointer bg-primary hover:bg-primary-light text-white py-5 rounded-xl font-semibold flex items-center justify-center gap-2"
           >
             {isLoading ? (
               'Creating account...'
@@ -310,6 +381,13 @@ function SignupPage() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
+      <RegistrationSuccessModal
+        open={showSuccessModal}
+        email={formData.email}
+        onGoToSignIn={() => navigate({ to: '/' })}
+        onCheckEmail={() => setShowSuccessModal(false)}
+      />
+      {/* Mobile */}
       <div className="flex flex-col flex-1 lg:hidden">
         <div className="relative bg-gray-900 px-6 pt-10 pb-8 overflow-hidden shrink-0">
           <div className="absolute -top-20 -right-20 w-56 h-56 rounded-full bg-primary/15 blur-3xl pointer-events-none" />
@@ -358,6 +436,7 @@ function SignupPage() {
         </div>
       </div>
 
+      {/* Desktop */}
       <div className="hidden lg:flex h-screen overflow-hidden">
         <div className="w-[46%] bg-gray-900 flex flex-col justify-between py-8 px-12 relative overflow-hidden shrink-0">
           <div className="absolute inset-0 pointer-events-none">

@@ -10,11 +10,16 @@ export const Route = createFileRoute('/earnings')({
   component: EarningsPage,
 })
 
+function getPlatformFee(level: number, cost: number): number {
+  if (level === 1) return 5
+  return cost * 0.1
+}
+
 const levelConfig = [
   { level: 1, maxPositions: 2, cost: 20, earnings: '$40.00' },
   { level: 2, maxPositions: 4, cost: 30, earnings: '$60.00' },
-  { level: 3, maxPositions: 8, cost: 50, earnings: '$0.00' },
-  { level: 4, maxPositions: 16, cost: 100, earnings: '$0.00' },
+  { level: 3, maxPositions: 8, cost: 80, earnings: '$0.00' },
+  { level: 4, maxPositions: 16, cost: 300, earnings: '$0.00' },
 ]
 
 function getLevelStatus(level: number, currentLevel: number) {
@@ -23,6 +28,7 @@ function getLevelStatus(level: number, currentLevel: number) {
   if (level === effectiveLevel) return 'active'
   return 'locked'
 }
+
 function getLockedBy(level: number) {
   return `Complete Level ${level - 1} First`
 }
@@ -51,13 +57,16 @@ function LevelCard({
   const isLocked = status === 'locked'
   const isActive = status === 'active'
 
+  const platformFee = getPlatformFee(level, cost)
+  const totalCost = cost + platformFee
+
   const positions = isComplete ? maxPositions : 0
   const pct = (positions / maxPositions) * 100
 
   const handleUpgradeClick = () => {
     const balance = mainBalance ?? 0
-    if (balance < cost) {
-      onInsufficientBalance(cost, balance)
+    if (balance < totalCost) {
+      onInsufficientBalance(totalCost, balance)
       return
     }
     onUpgradeClick(level)
@@ -96,14 +105,30 @@ function LevelCard({
 
       <div className="space-y-1">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-400">Cost:</span>
+          <span className="text-gray-400">Level Cost:</span>
           <span
             className={`font-semibold ${isLocked ? 'text-gray-300' : 'text-gray-900'}`}
           >
-            ${cost}
+            ${cost.toFixed(2)}
           </span>
         </div>
         <div className="flex items-center justify-between text-sm">
+          <span className="text-gray-400">Platform Fee:</span>
+          <span
+            className={`font-semibold ${isLocked ? 'text-gray-300' : 'text-orange-500'}`}
+          >
+            +${platformFee.toFixed(2)}
+          </span>
+        </div>
+        <div className="flex items-center justify-between text-sm border-t border-gray-100 pt-1.5 mt-1">
+          <span className="text-gray-700 font-semibold">Total:</span>
+          <span
+            className={`font-bold ${isLocked ? 'text-gray-300' : 'text-gray-900'}`}
+          >
+            ${totalCost.toFixed(2)}
+          </span>
+        </div>
+        <div className="flex items-center justify-between text-sm pt-0.5">
           <span className="text-gray-400">Earnings:</span>
           <span
             className={`font-semibold ${isLocked || earnings === '$0.00' ? 'text-gray-300' : 'text-green-500'}`}
@@ -119,7 +144,7 @@ function LevelCard({
           className="w-full flex cursor-pointer items-center justify-center gap-2 bg-primary hover:bg-primary-light text-white py-2.5 rounded-xl text-sm font-semibold transition-colors"
         >
           <PlusCircle className="w-4 h-4" />
-          Upgrade Level {level}
+          Upgrade — ${totalCost.toFixed(2)}
         </button>
       )}
       {isComplete && (
@@ -199,9 +224,10 @@ function EarningsPage() {
   return (
     <div className="max-w-7xl mx-auto w-full space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Earinings</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Earnings</h1>
         <p className="text-gray-500 text-sm mt-1">Track your earnings</p>
       </div>
+
       <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
         {earningsStats.map((stat) => (
           <div
@@ -229,6 +255,13 @@ function EarningsPage() {
             Current: Level {currentLevel}
           </span>
         </div>
+
+        <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 mb-4 text-xs text-blue-700 leading-relaxed">
+          <span className="font-semibold">Platform Fee:</span> Level 1 includes
+          a fixed $5.00 fee. Levels 2–4 include a 10% platform fee on top of the
+          level cost.
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
           {levelConfig.map((lvl) => (
             <LevelCard
@@ -248,7 +281,10 @@ function EarningsPage() {
           open={upgradeLevel !== null}
           onOpenChange={(open) => !open && setUpgradeLevel(null)}
           level={selectedLevel.level}
-          cost={selectedLevel.cost}
+          cost={
+            selectedLevel.cost +
+            getPlatformFee(selectedLevel.level, selectedLevel.cost)
+          }
           onSuccess={handleUpgradeSuccess}
         />
       )}

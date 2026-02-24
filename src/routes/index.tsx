@@ -193,7 +193,7 @@ function TheForm({
             <button
               type="button"
               onClick={onWrongEmail}
-              className="text-xs text-primary hover:underline mt-1.5 block"
+              className="text-xs cursor-pointer text-primary hover:underline mt-1.5 block"
             >
               Wrong email? Change it
             </button>
@@ -237,7 +237,7 @@ function TheForm({
                 type="button"
                 onClick={onResendOTP}
                 disabled={isLoading}
-                className="text-xs text-primary hover:underline disabled:opacity-40"
+                className="text-xs cursor-pointer text-primary hover:underline disabled:opacity-40"
               >
                 Resend
               </button>
@@ -247,7 +247,7 @@ function TheForm({
             <button
               type="button"
               onClick={onSwitchToPassword}
-              className="hover:text-primary transition-colors"
+              className="hover:text-primary cursor-pointer transition-colors"
             >
               Use password instead
             </button>
@@ -313,7 +313,7 @@ function TheForm({
               <button
                 type="button"
                 onClick={onTogglePassword}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors z-10"
+                className="absolute right-3.5 cursor-pointer top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors z-10"
               >
                 {showPassword ? (
                   <EyeOff className="w-4 h-4" />
@@ -331,7 +331,7 @@ function TheForm({
           <Button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-primary hover:bg-primary-light text-white py-5 rounded-xl font-semibold flex items-center justify-center gap-2"
+            className="w-full bg-primary cursor-pointer hover:bg-primary-light text-white py-5 rounded-xl font-semibold flex items-center justify-center gap-2"
           >
             {isLoading ? (
               'Signing in...'
@@ -346,7 +346,7 @@ function TheForm({
             <button
               type="button"
               onClick={onSwitchToOTP}
-              className="hover:text-primary transition-colors"
+              className="hover:text-primary cursor-pointer transition-colors"
             >
               Use OTP instead
             </button>

@@ -10,6 +10,7 @@ import {
   History,
   ChevronLeft,
   ChevronRight,
+  Check,
 } from 'lucide-react'
 import { transactionService } from '@/services/transaction.service'
 import { Transaction, TransactionMeta } from '@/lib/transaction'
@@ -28,6 +29,7 @@ function DashboardPage() {
   const [txMeta, setTxMeta] = useState<TransactionMeta | null>(null)
   const [txLoading, setTxLoading] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
+  const [copied, setCopied] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -55,6 +57,14 @@ function DashboardPage() {
     }
     fetchTransactions()
   }, [currentPage])
+
+  const handleCopyReferral = () => {
+    navigator.clipboard.writeText(
+      `https://app.meritfinance.org/signup/${userData?.referralCode}`,
+    )
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2500)
+  }
 
   const formatBalance = (balance: number | null) => {
     if (balance === null) return '0.00'
@@ -104,6 +114,12 @@ function DashboardPage() {
             >
               Withdraw <Receive />
             </button>
+            <button
+              onClick={() => setWithdrawOpen(true)}
+              className="w-full sm:w-auto cursor-pointer bg-white/20 hover:bg-white/30 text-white px-4 sm:px-6 py-2.5 rounded-full border border-white font-medium transition-all flex items-center justify-center gap-2 text-sm backdrop-blur-sm"
+            >
+              Transfer <Receive />
+            </button>
           </div>
         </div>
       </section>
@@ -132,7 +148,6 @@ function DashboardPage() {
             Upgrade to new level
           </button>
         </div>
-
         <div className="absolute right-2 sm:right-16 bottom-0 z-10 pointer-events-none">
           <img
             src="/images/gift.png"
@@ -142,26 +157,33 @@ function DashboardPage() {
         </div>
       </section>
 
+      {/* Referral Link */}
       <section className="bg-white rounded-2xl p-4 sm:p-6 border border-[#E8E8E8]">
-        <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <h3 className="text-gray-900 font-semibold mb-1">
-              Your Referral Link
-            </h3>
-            <p className="text-gray-500 text-sm truncate">
-              https://meritfinance.org/signup/
-              {userData?.referralCode ?? '...'}
-            </p>
-          </div>
+        <h3 className="text-gray-900 font-semibold mb-3">Your Referral Link</h3>
+        <div className="flex items-center gap-3 bg-gray-50 border border-[#E8E8E8] rounded-xl px-4 py-3">
+          <p className="text-gray-500 text-sm truncate flex-1">
+            https://app.meritfinance.org/signup/
+            {userData?.referralCode ?? '...'}
+          </p>
           <button
-            onClick={() =>
-              navigator.clipboard.writeText(
-                `https://app.meritfinance.org/${userData?.referralCode}`,
-              )
-            }
-            className="bg-[#EDF1FF] cursor-pointer p-3 rounded-full transition-all shrink-0"
+            onClick={handleCopyReferral}
+            className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+              copied
+                ? 'bg-green-50 text-green-600 border border-green-200'
+                : 'bg-[#EDF1FF] text-primary hover:bg-blue-100 border border-transparent'
+            }`}
           >
-            <Copy />
+            {copied ? (
+              <>
+                <Check className="w-3.5 h-3.5" />
+                Copied!
+              </>
+            ) : (
+              <>
+                <Copy />
+                Copy
+              </>
+            )}
           </button>
         </div>
       </section>
@@ -266,11 +288,9 @@ function DashboardPage() {
                   <ChevronLeft className="w-4 h-4" />
                   Previous
                 </button>
-
                 <span className="text-sm text-gray-500">
                   Page {currentPage} of {totalPages}
                 </span>
-
                 <button
                   onClick={() => setCurrentPage((p) => p + 1)}
                   disabled={!hasNext || txLoading}

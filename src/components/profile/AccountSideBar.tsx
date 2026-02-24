@@ -31,6 +31,12 @@ export function AccountSidebar() {
                 : '—'}
             </span>
           </div>
+          <div className="flex items-center justify-between">
+            <span className="text-gray-500 text-sm">Referred By:</span>
+            <span className="text-gray-700 text-xs font-semibold">
+              Level {userData?.referredByName ?? '—'}
+            </span>
+          </div>
         </div>
       </div>
 

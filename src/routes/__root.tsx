@@ -2,6 +2,7 @@ import { Outlet, createRootRoute, useRouterState } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import Header from '@/components/Header'
 import '../styles.css'
+import 'react-phone-number-input/style.css'
 import type { QueryClient } from '@tanstack/react-query'
 import Footer from '@/components/Footer'
 import { useAuthStore } from '@/stores/auth.stores'
@@ -16,7 +17,13 @@ export const Route = createRootRoute<MyRouterContext>({
   component: RootComponent,
 })
 
-const AUTH_ROUTES = ['/', '/signup', '/forgot-password', '/reset-password']
+const AUTH_ROUTES = [
+  '/',
+  '/signup',
+  '/forgot-password',
+  '/reset-password',
+  '/verify',
+]
 
 function RootComponent() {
   const pathname = useRouterState({ select: (s) => s.location.pathname })

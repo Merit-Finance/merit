@@ -7,7 +7,7 @@ interface MatrixLevelProps {
   parentKey: string
 }
 
-function Connector() {
+function VerticalConnector() {
   return (
     <div className="flex justify-center">
       <div className="w-px h-6 bg-gray-200" />
@@ -15,29 +15,26 @@ function Connector() {
   )
 }
 
-export function MatrixLevel({ nodes, level, parentKey }: MatrixLevelProps) {
+function ChildrenGroup({ nodes, level, parentKey }: MatrixLevelProps) {
   if (!nodes.length) return null
 
   return (
     <div className="flex flex-col items-center w-full">
-      <Connector />
-      <div
-        className="relative flex items-start justify-center w-full"
-        style={{ gap: `${Math.max(12, 40 - level * 6)}px` }}
-      >
+      <VerticalConnector />
+      <div className="relative flex items-start justify-center w-full">
         {nodes.length > 1 && (
-          <div
-            className="absolute top-7 left-1/2 -translate-x-1/2 h-px bg-gray-200"
-            style={{ width: 'calc(100% - 64px)' }}
-          />
+          <div className="absolute top-7 h-px bg-gray-200 left-1/4 right-1/4" />
         )}
         {nodes.map((node, i) => {
           const key = nodeKey(node, i, parentKey)
           return (
-            <div key={key} className="flex flex-col items-center">
+            <div
+              key={key}
+              className="flex flex-col items-center flex-1 min-w-0"
+            >
               <MatrixNodeCard node={node} />
               {node.children && node.children.length > 0 && (
-                <MatrixLevel
+                <ChildrenGroup
                   nodes={node.children}
                   level={level + 1}
                   parentKey={key}
@@ -49,4 +46,8 @@ export function MatrixLevel({ nodes, level, parentKey }: MatrixLevelProps) {
       </div>
     </div>
   )
+}
+
+export function MatrixLevel({ nodes, level, parentKey }: MatrixLevelProps) {
+  return <ChildrenGroup nodes={nodes} level={level} parentKey={parentKey} />
 }
