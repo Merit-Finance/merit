@@ -88,7 +88,7 @@ function DashboardPage() {
   return (
     <div className="max-w-4xl mx-auto w-full space-y-4 sm:space-y-6">
       <section className="bg-gradient-to-br from-[#149AEE] to-[#0B7FD4] rounded-2xl py-6 px-5 sm:py-8 sm:px-10 shadow-lg">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 sm:gap-6">
           <div>
             <p className="text-white/90 text-sm mb-2">Current Balance</p>
             {isLoading ? (
@@ -107,16 +107,16 @@ function DashboardPage() {
             )}
           </div>
 
-          <div className="flex flex-col sm:flex-col gap-2 sm:gap-3 w-full sm:w-auto">
+          <div className="flex flex-row sm:flex-col gap-2 sm:gap-3 sm:w-auto">
             <button
               onClick={() => setWithdrawOpen(true)}
-              className="w-full sm:w-auto cursor-pointer bg-white/20 hover:bg-white/30 text-white px-4 sm:px-6 py-2.5 rounded-full border border-white font-medium transition-all flex items-center justify-center gap-2 text-sm backdrop-blur-sm"
+              className="flex-1 sm:flex-none sm:w-auto cursor-pointer bg-white/20 hover:bg-white/30 text-white px-4 sm:px-6 py-2.5 rounded-full border border-white font-medium transition-all flex items-center justify-center gap-2 text-sm backdrop-blur-sm"
             >
               Withdraw <Receive />
             </button>
             <button
               onClick={() => setWithdrawOpen(true)}
-              className="w-full sm:w-auto cursor-pointer bg-white/20 hover:bg-white/30 text-white px-4 sm:px-6 py-2.5 rounded-full border border-white font-medium transition-all flex items-center justify-center gap-2 text-sm backdrop-blur-sm"
+              className="flex-1 sm:flex-none sm:w-auto cursor-pointer bg-white/20 hover:bg-white/30 text-white px-4 sm:px-6 py-2.5 rounded-full border border-white font-medium transition-all flex items-center justify-center gap-2 text-sm backdrop-blur-sm"
             >
               Transfer <Receive />
             </button>
@@ -125,34 +125,36 @@ function DashboardPage() {
       </section>
 
       <section
-        className="bg-[#DAEAFF] rounded-2xl py-6 px-5 sm:py-8 sm:px-10 relative overflow-hidden"
-        style={{
-          backgroundImage: "url('/images/vector1.png')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          minHeight: '160px',
-        }}
+        className="bg-[#DAEAFF] rounded-2xl relative overflow-hidden"
+        style={{ minHeight: '160px' }}
       >
-        <div className="relative z-10 max-w-[55%] sm:max-w-sm">
-          <h2 className="text-[#149AEE] text-lg sm:text-2xl font-bold leading-snug">
-            Upgrade your level to
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: "url('/images/vector1.png')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+          }}
+        />
+
+        <div className="relative z-10 px-5 py-6 sm:px-10 sm:py-8 max-w-[55%] sm:max-w-sm">
+          <h2 className="text-[#149AEE] text-base sm:text-2xl font-bold leading-snug">
+            Upgrade your level to earn more rewards
           </h2>
-          <p className="text-[#149AEE] text-lg sm:text-2xl font-bold mb-3 sm:mb-4 leading-snug">
-            earn more rewards
-          </p>
           <button
             onClick={() => navigate({ to: '/earnings' })}
-            className="bg-[#149AEE] cursor-pointer hover:bg-[#0B7FD4] text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-full font-medium transition-all text-xs sm:text-sm whitespace-nowrap"
+            className="mt-3 sm:mt-4 bg-[#149AEE] cursor-pointer hover:bg-[#0B7FD4] text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-full font-medium transition-all text-xs sm:text-sm whitespace-nowrap"
           >
             Upgrade to new level
           </button>
         </div>
-        <div className="absolute right-2 sm:right-16 bottom-0 z-10 pointer-events-none">
+
+        <div className="absolute bottom-0 right-4 sm:right-14 z-10 pointer-events-none">
           <img
             src="/images/gift.png"
             alt="Gift box"
-            className="w-24 h-24 sm:w-44 sm:h-44 object-contain object-bottom"
+            className="w-28 h-28 sm:w-40 sm:h-40 md:w-48 md:h-48 object-contain object-bottom"
           />
         </div>
       </section>

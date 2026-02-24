@@ -358,7 +358,7 @@ function TheForm({
         No account?{' '}
         <Link
           to="/signup"
-          className="text-primary font-semibold hover:underline"
+          className="text-primary cursor-pointer font-semibold hover:underline"
         >
           Create one
         </Link>
