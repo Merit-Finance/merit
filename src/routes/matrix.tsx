@@ -50,7 +50,7 @@ function MatrixPage() {
           matrixData={matrixData}
           loading={loading}
           error={error}
-          uplineUsername={userData?.userName ?? null}
+          uplineUsername={userData?.referredByName ?? null}
         />
         <MatrixSidebar levelCounts={levelCounts} />
       </div>
