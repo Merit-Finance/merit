@@ -25,7 +25,7 @@ function ReferralsPage() {
     fetchUser()
   }, [fetchAll])
 
-  const referralLink = `https://app.meritfinance.org/signup/${userData?.referralCode ?? ''}`
+  const referralLink = `https://app.meritfinance.org/signup?ref=${userData?.referralCode ?? ''}`
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(referralLink)
