@@ -31,6 +31,14 @@ export function AccountSidebar() {
                 : '—'}
             </span>
           </div>
+          {userData?.referredByName && (
+            <div className="flex items-center justify-between">
+              <span className="text-gray-500 text-sm">Referred By:</span>
+              <span className="text-gray-700 text-xs font-semibold">
+                {userData.referredByName}
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -54,7 +62,6 @@ export function AccountSidebar() {
               {userData?.isVerified ? 'Verified Email' : 'Email Not Verified'}
             </span>
           </div>
-
           <div className="flex items-center gap-3">
             <CalendarDays className="w-4 h-4 text-gray-400 shrink-0" />
             <span className="text-sm text-gray-500">Joined:</span>
@@ -62,12 +69,6 @@ export function AccountSidebar() {
               {userData?.createdAt
                 ? new Date(userData.createdAt).toLocaleDateString()
                 : '—'}
-            </span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-gray-500 text-sm">Referred By:</span>
-            <span className="text-gray-700 text-xs font-semibold">
-              Level {userData?.referredByName ?? '—'}
             </span>
           </div>
         </div>

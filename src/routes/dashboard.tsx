@@ -60,7 +60,7 @@ function DashboardPage() {
 
   const handleCopyReferral = () => {
     navigator.clipboard.writeText(
-      `https://app.meritfinance.org/signup/${userData?.referralCode}`,
+      `https://app.meritfinance.org/signup?ref=${userData?.referralCode}`,
     )
     setCopied(true)
     setTimeout(() => setCopied(false), 2500)
