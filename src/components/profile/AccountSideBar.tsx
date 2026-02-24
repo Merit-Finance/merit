@@ -31,14 +31,6 @@ export function AccountSidebar() {
                 : '—'}
             </span>
           </div>
-          {userData?.referredByName && (
-            <div className="flex items-center justify-between">
-              <span className="text-gray-500 text-sm">Referred By:</span>
-              <span className="text-gray-700 text-xs font-semibold">
-                {userData.referredByName}
-              </span>
-            </div>
-          )}
         </div>
       </div>
 
@@ -54,6 +46,7 @@ export function AccountSidebar() {
               {userData?.id ?? '—'}
             </span>
           </div>
+
           <div className="flex items-center gap-3">
             <BadgeCheck
               className={`w-4 h-4 shrink-0 ${userData?.isVerified ? 'text-green-500' : 'text-gray-300'}`}
@@ -71,6 +64,14 @@ export function AccountSidebar() {
                 : '—'}
             </span>
           </div>
+          {userData?.referredByName && (
+            <div className="flex items-center justify-between">
+              <span className="text-gray-500 text-sm">Referred By:</span>
+              <span className="text-gray-700 text-xs font-semibold">
+                {userData.referredByName}
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </div>
