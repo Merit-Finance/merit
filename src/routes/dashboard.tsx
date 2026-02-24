@@ -157,12 +157,11 @@ function DashboardPage() {
         </div>
       </section>
 
-      {/* Referral Link */}
       <section className="bg-white rounded-2xl p-4 sm:p-6 border border-[#E8E8E8]">
         <h3 className="text-gray-900 font-semibold mb-3">Your Referral Link</h3>
         <div className="flex items-center gap-3 bg-gray-50 border border-[#E8E8E8] rounded-xl px-4 py-3">
           <p className="text-gray-500 text-sm truncate flex-1">
-            https://app.meritfinance.org/signup/
+            https://app.meritfinance.org/signup?ref=
             {userData?.referralCode ?? '...'}
           </p>
           <button
