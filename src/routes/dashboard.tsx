@@ -45,6 +45,7 @@ function DashboardPage() {
           page: currentPage,
           limit: TX_LIMIT,
         })
+        console.log("Response")
         if (response.success) {
           setTransactions(response.data)
           setTxMeta(response.meta)

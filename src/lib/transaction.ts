@@ -22,8 +22,25 @@ export interface Transaction {
 export interface TransactionMeta {
   total: number
   page: number
-  limit: number
+  pageSize: number
   totalPages: number
+  hasNextPage: boolean
+  hasPreviousPage: boolean
+}
+
+export interface TransactionListApiResponse {
+  success: boolean
+  message: string
+  statusCode: number
+  data: {
+    data: Transaction[]
+  } & TransactionMeta
+}
+
+export interface TransactionListResponse {
+  success: boolean
+  data: Transaction[]
+  meta: TransactionMeta
 }
 
 export interface WithdrawPayload {
@@ -35,14 +52,6 @@ export interface WithdrawPayload {
 export interface WithdrawResponse {
   success: boolean
   message: string
-  statusCode: number
-}
-
-export interface TransactionListResponse {
-  success: boolean
-  message: string
-  data: Transaction[]
-  meta: TransactionMeta
   statusCode: number
 }
 

@@ -1,6 +1,7 @@
 import apiClient from '@/lib/api-client'
 import {
   GetTransactionsParams,
+  TransactionListApiResponse,
   TransactionListResponse,
   WithdrawPayload,
   WithdrawResponse,
@@ -11,11 +12,16 @@ export const transactionService = {
     params: GetTransactionsParams = {},
   ): Promise<TransactionListResponse> => {
     const { page = 1, limit = 10 } = params
-    const response = await apiClient.get<TransactionListResponse>(
+    const response = await apiClient.get<TransactionListApiResponse>(
       '/balance/transaction',
       { params: { page, limit } },
     )
-    return response.data
+    const { data, ...meta } = response.data.data
+    return {
+      success: response.data.success,
+      data,
+      meta,
+    }
   },
 
   withdraw: async (payload: WithdrawPayload): Promise<WithdrawResponse> => {
