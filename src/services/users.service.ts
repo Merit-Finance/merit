@@ -28,7 +28,7 @@ export const userService = {
   searchByIdentifier: async (
     identifier: string,
   ): Promise<SearchUserResponse> => {
-    const response = await apiClient.get<SearchUserResponse>('/users/email', {
+    const response = await apiClient.get<SearchUserResponse>('/users/search-user', {
       params: { identifier },
     })
     return response.data

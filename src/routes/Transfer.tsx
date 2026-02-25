@@ -198,9 +198,8 @@ function TransferPage() {
   }
 
   return (
-    <div className="max-w-lg mx-auto w-full space-y-6 px-0 sm:px-4">
-      {/* Header */}
-      <div className="flex items-center gap-3">
+    <div>
+      <div className="flex max-w-4xl items-center gap-3">
         <button
           onClick={() => navigate({ to: '/dashboard' })}
           className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
@@ -209,71 +208,75 @@ function TransferPage() {
         </button>
         <h1 className="text-xl font-bold text-gray-900">Transfer</h1>
       </div>
+      <div className="max-w-xl mx-auto w-full space-y-6 px-0 sm:px-4">
+        <div className="flex justify-end">
+          <span className="text-xs text-gray-400 bg-gray-50 border border-[#E8E8E8] px-3 py-1 rounded-full">
+            Available: $
+            {(mainBalance ?? 0).toLocaleString('en-US', {
+              minimumFractionDigits: 2,
+            })}
+          </span>
+        </div>
 
-      <div className="flex justify-end">
-        <span className="text-xs text-gray-400 bg-gray-50 border border-[#E8E8E8] px-3 py-1 rounded-full">
-          Available: $
-          {(mainBalance ?? 0).toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-          })}
-        </span>
-      </div>
+        <div className="bg-white rounded-2xl p-5 border border-[#E8E8E8] space-y-3">
+          <label className="text-sm font-semibold text-gray-700">
+            Recipient
+          </label>
 
-      <div className="bg-white rounded-2xl p-5 border border-[#E8E8E8] space-y-3">
-        <label className="text-sm font-semibold text-gray-700">Recipient</label>
-
-        {recipient ? (
-          <div className="flex items-center justify-between p-4 border border-[#E8E8E8] rounded-xl bg-gray-50">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm shrink-0">
-                {(recipient.name ?? recipient.userName ?? 'U')[0].toUpperCase()}
-              </div>
-              <div>
-                <p className="text-gray-900 font-semibold text-sm">
-                  {recipient.name ?? recipient.userName}
-                </p>
-                <p className="text-gray-400 text-xs">{recipient.email}</p>
-                {shortWallet && (
-                  <p className="text-gray-400 text-xs font-mono">
-                    {shortWallet}
+          {recipient ? (
+            <div className="flex items-center justify-between p-4 border border-[#E8E8E8] rounded-xl bg-gray-50">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm shrink-0">
+                  {(recipient.name ??
+                    recipient.userName ??
+                    'U')[0].toUpperCase()}
+                </div>
+                <div>
+                  <p className="text-gray-900 font-semibold text-sm">
+                    {recipient.name ?? recipient.userName}
                   </p>
+                  <p className="text-gray-400 text-xs">{recipient.email}</p>
+                  {shortWallet && (
+                    <p className="text-gray-400 text-xs font-mono">
+                      {shortWallet}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <button
+                onClick={handleClearRecipient}
+                className="text-gray-400 hover:text-gray-600 transition-colors p-1"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <div className="relative">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 z-10">
+                {isSearching ? (
+                  <div className="w-4 h-4 border-2 border-gray-300 border-t-primary rounded-full animate-spin" />
+                ) : (
+                  <Search className="w-4 h-4 text-gray-400" />
                 )}
               </div>
+              <Input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                placeholder="Search by email or username..."
+                className="pl-9"
+              />
             </div>
-            <button
-              onClick={handleClearRecipient}
-              className="text-gray-400 hover:text-gray-600 transition-colors p-1"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-        ) : (
-          <div className="relative">
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 z-10">
-              {isSearching ? (
-                <div className="w-4 h-4 border-2 border-gray-300 border-t-primary rounded-full animate-spin" />
-              ) : (
-                <Search className="w-4 h-4 text-gray-400" />
-              )}
-            </div>
-            <Input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              placeholder="Search by email or username..."
-              className="pl-9"
-            />
-          </div>
-        )}
+          )}
 
-        {searchError && (
-          <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-100 rounded-xl">
-            <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
-            <p className="text-red-600 text-xs">{searchError}</p>
-          </div>
-        )}
+          {searchError && (
+            <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-100 rounded-xl">
+              <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
+              <p className="text-red-600 text-xs">{searchError}</p>
+            </div>
+          )}
+        </div>
       </div>
-
       {recipient && (
         <div className="bg-white rounded-2xl p-5 border border-[#E8E8E8] space-y-3">
           <label className="text-sm font-semibold text-gray-700">Amount</label>
