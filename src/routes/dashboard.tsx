@@ -46,7 +46,6 @@ function DashboardPage() {
           page: currentPage,
           limit: TX_LIMIT,
         })
-        console.log('Response', response)
         if (response.success) {
           setTransactions(response.data)
           setTxMeta(response.meta)
@@ -261,13 +260,16 @@ function DashboardPage() {
                       {parseFloat(tx.amount).toFixed(2)}
                     </span>
                     <div className="flex items-center gap-1">
-                      <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-blue-50 text-blue-500">
-                        {tx.network}
-                      </span>
+                      {tx.network && (
+                        <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-blue-50 text-blue-500">
+                          {tx.network}
+                        </span>
+                      )}
                       <span
                         className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${
-                          tx.status === 'COMPLETED'
-                            ? 'bg-gray-900 text-white'
+                          tx.status === 'COMPLETED' ||
+                          tx.status === 'SUCCESSFUL'
+                            ? 'bg-green-100 text-green-600'
                             : tx.status === 'PENDING'
                               ? 'bg-yellow-100 text-yellow-700'
                               : 'bg-red-100 text-red-600'

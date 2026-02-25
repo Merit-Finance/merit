@@ -1,6 +1,10 @@
 export type TransactionDirection = 'CREDIT' | 'DEBIT'
 export type Network = 'BSC' | 'TON' | 'TRON'
-export type TransactionStatus = 'PENDING' | 'COMPLETED' | 'FAILED'
+export type TransactionStatus =
+  | 'PENDING'
+  | 'COMPLETED'
+  | 'SUCCESSFUL'
+  | 'FAILED'
 export type TransactionSource =
   | 'DIRECT_DEPOSIT'
   | 'LEVEL_UPGRADE'
