@@ -33,6 +33,24 @@ function ReferralsPage() {
     setTimeout(() => setCopied(false), 2000)
   }
 
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Join Merit Finance',
+          text: 'Join using my referral link and we both earn!',
+          url: referralLink,
+        })
+      } catch (err) {
+        // User cancelled or error — fallback to copy
+        copyToClipboard()
+      }
+    } else {
+      // Browser doesn't support Web Share API — fallback to copy
+      copyToClipboard()
+    }
+  }
+
   const statCards = [
     {
       id: 1,
@@ -115,7 +133,10 @@ function ReferralsPage() {
               className={`w-4 h-4 ${copied ? 'text-green-500' : 'text-gray-500'}`}
             />
           </button>
-          <button className="flex items-center gap-2 bg-gray-900 hover:bg-gray-700 text-white px-4 py-3 rounded-lg text-sm font-medium transition-colors">
+          <button
+            onClick={handleShare}
+            className="flex items-center gap-2 bg-primary hover:bg-primary-light text-white px-4 py-3 rounded-lg text-sm font-medium transition-colors"
+          >
             <Share2 className="w-4 h-4" />
             Share
           </button>
