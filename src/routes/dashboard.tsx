@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { transactionService } from '@/services/transaction.service'
 import { Transaction, TransactionMeta } from '@/lib/transaction'
+import { Transfer } from '@/assets/svgs'
 
 export const Route = createFileRoute('/dashboard')({
   component: DashboardPage,
@@ -45,7 +46,7 @@ function DashboardPage() {
           page: currentPage,
           limit: TX_LIMIT,
         })
-        console.log("Response")
+        console.log('Response', response)
         if (response.success) {
           setTransactions(response.data)
           setTxMeta(response.meta)
@@ -119,7 +120,7 @@ function DashboardPage() {
               onClick={() => setWithdrawOpen(true)}
               className="flex-1 sm:flex-none sm:w-auto cursor-pointer bg-white/20 hover:bg-white/30 text-white px-4 sm:px-6 py-2.5 rounded-full border border-white font-medium transition-all flex items-center justify-center gap-2 text-sm backdrop-blur-sm"
             >
-              Transfer <Receive />
+              Transfer <Transfer />
             </button>
           </div>
         </div>
