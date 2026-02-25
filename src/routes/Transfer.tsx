@@ -199,7 +199,7 @@ function TransferPage() {
 
   return (
     <div>
-      <div className="flex max-w-4xl items-center gap-3">
+      <div className="max-w-xl mx-auto w-full space-y-6 px-0 sm:px-4">
         <button
           onClick={() => navigate({ to: '/dashboard' })}
           className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
@@ -207,8 +207,6 @@ function TransferPage() {
           <ArrowLeft className="w-5 h-5 text-gray-600" />
         </button>
         <h1 className="text-xl font-bold text-gray-900">Transfer</h1>
-      </div>
-      <div className="max-w-xl mx-auto w-full space-y-6 px-0 sm:px-4">
         <div className="flex justify-end">
           <span className="text-xs text-gray-400 bg-gray-50 border border-[#E8E8E8] px-3 py-1 rounded-full">
             Available: $
@@ -277,6 +275,7 @@ function TransferPage() {
           )}
         </div>
       </div>
+
       {recipient && (
         <div className="bg-white rounded-2xl p-5 border border-[#E8E8E8] space-y-3">
           <label className="text-sm font-semibold text-gray-700">Amount</label>
