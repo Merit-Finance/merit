@@ -8,9 +8,29 @@ import {
   UserResponse,
 } from '../lib/user'
 
+export interface SearchUserResponse {
+  success: boolean
+  data: {
+    id: string
+    name: string
+    email: string
+    userName: string
+    wallet: { address: string }[]
+  }
+}
+
 export const userService = {
   getUser: async (): Promise<UserResponse> => {
     const response = await apiClient.get<UserResponse>('/users/email')
+    return response.data
+  },
+
+  searchByIdentifier: async (
+    identifier: string,
+  ): Promise<SearchUserResponse> => {
+    const response = await apiClient.get<SearchUserResponse>('/users/email', {
+      params: { identifier },
+    })
     return response.data
   },
 

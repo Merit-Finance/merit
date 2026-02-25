@@ -7,6 +7,17 @@ import {
   WithdrawResponse,
 } from '@/lib/transaction'
 
+export interface InternalTransferPayload {
+  recipientId: string
+  amount: number
+  pin: string
+}
+
+export interface InternalTransferResponse {
+  success: boolean
+  message: string
+}
+
 export const transactionService = {
   getTransactions: async (
     params: GetTransactionsParams = {},
@@ -29,6 +40,22 @@ export const transactionService = {
       '/transaction/withdraw',
       payload,
     )
+    return response.data
+  },
+
+  internalTransfer: async (
+    payload: InternalTransferPayload,
+  ): Promise<InternalTransferResponse> => {
+    const response = await apiClient.post<InternalTransferResponse>(
+      '/balance/internal-transfer',
+      payload,
+    )
+    return response.data
+  },
+  setTransferPin: async (
+    pin: string,
+  ): Promise<{ success: boolean; message: string }> => {
+    const response = await apiClient.post('/balance/transfer-pin', { pin })
     return response.data
   },
 }

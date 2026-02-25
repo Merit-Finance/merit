@@ -117,7 +117,7 @@ function DashboardPage() {
               Withdraw <Receive />
             </button>
             <button
-              onClick={() => setWithdrawOpen(true)}
+              onClick={() => navigate({ to: '/Transfer' })}
               className="flex-1 sm:flex-none sm:w-auto cursor-pointer bg-white/20 hover:bg-white/30 text-white px-4 sm:px-6 py-2.5 rounded-full border border-white font-medium transition-all flex items-center justify-center gap-2 text-sm backdrop-blur-sm"
             >
               Transfer <Transfer />

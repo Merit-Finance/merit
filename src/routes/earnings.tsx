@@ -23,9 +23,8 @@ const levelConfig = [
 ]
 
 function getLevelStatus(level: number, currentLevel: number) {
-  const effectiveLevel = currentLevel
-  if (level < effectiveLevel) return 'complete'
-  if (level === effectiveLevel) return 'active'
+  if (level <= currentLevel) return 'complete'
+  if (level === currentLevel + 1) return 'active'
   return 'locked'
 }
 
