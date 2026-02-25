@@ -55,7 +55,7 @@ export const transactionService = {
   setTransferPin: async (
     pin: string,
   ): Promise<{ success: boolean; message: string }> => {
-    const response = await apiClient.post('/balance/transfer-pin', { pin })
+    const response = await apiClient.post('/users/transfer-pin', { pin })
     return response.data
   },
 }
