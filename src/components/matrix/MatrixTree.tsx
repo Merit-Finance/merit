@@ -61,10 +61,10 @@ export function MatrixTree({
           <p className="text-red-400 text-sm">{error}</p>
         </div>
       ) : matrixData ? (
-        <div className="w-full overflow-x-auto overflow-y-hidden pb-4">
+        <div className="w-full overflow-x-auto pb-4">
           <div
             className="flex flex-col items-center"
-            style={{ minWidth: '1200px' }}
+            style={{ minWidth: 'max-content' }}
           >
             {uplineUsername && (
               <>
