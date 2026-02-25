@@ -64,3 +64,25 @@ export function countByLevel(node: MatrixNode | null): Record<number, number> {
   node.children?.forEach(traverse)
   return counts
 }
+
+export function padMatrix(node: MatrixNode, maxDepth: number = 5): MatrixNode {
+  if (node.level >= maxDepth) return { ...node, children: [] }
+
+  const children = [...(node.children ?? [])]
+  while (children.length < 2) {
+    children.push({
+      id: null,
+      name: null,
+      level: node.level + 1,
+      completed: false,
+      active: false,
+      isEmpty: true,
+      children: [],
+    })
+  }
+
+  return {
+    ...node,
+    children: children.map((child) => padMatrix(child, maxDepth)),
+  }
+}

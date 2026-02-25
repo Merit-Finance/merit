@@ -1,6 +1,5 @@
 import { MatrixLevel } from './MatrixLevel'
 import { MatrixNode } from '../../lib/MatrixType'
-import { MatrixNodeCard } from './MtrixnodeCard'
 
 interface MatrixTreeProps {
   matrixData: MatrixNode | null
@@ -62,10 +61,10 @@ export function MatrixTree({
           <p className="text-red-400 text-sm">{error}</p>
         </div>
       ) : matrixData ? (
-        <div className="w-full overflow-x-auto pb-4">
+        <div className="w-full overflow-x-auto overflow-y-hidden pb-4">
           <div
             className="flex flex-col items-center"
-            style={{ minWidth: 'max-content' }}
+            style={{ minWidth: '1200px' }}
           >
             {uplineUsername && (
               <>
@@ -102,12 +101,10 @@ export function MatrixTree({
 
             <div className="w-px h-6 bg-gray-200" />
 
-            <MatrixNodeCard node={matrixData} />
-
             {matrixData.children && matrixData.children.length > 0 && (
               <MatrixLevel
                 nodes={matrixData.children}
-                level={2}
+                level={1}
                 parentKey={matrixData.id ?? 'root'}
               />
             )}

@@ -1,7 +1,7 @@
 import { MatrixSidebar } from '@/components/matrix/MatrixSidebar'
 import { MatrixStatsBar } from '@/components/matrix/MatrixStats'
 import { MatrixTree } from '@/components/matrix/MatrixTree'
-import { countByLevel, MatrixNode } from '@/lib/MatrixType'
+import { countByLevel, MatrixNode, padMatrix } from '@/lib/MatrixType'
 import { matrixService } from '@/services/Matrix.service'
 import { useUserStore } from '@/stores/user.store'
 import { createFileRoute } from '@tanstack/react-router'
@@ -24,7 +24,7 @@ function MatrixPage() {
       setLoading(true)
       try {
         const response = await matrixService.getMatrix()
-        if (response.success) setMatrixData(response.data)
+        if (response.success) setMatrixData(padMatrix(response.data))
       } catch (err: any) {
         setError(err.response?.data?.message || 'Failed to load matrix.')
       } finally {

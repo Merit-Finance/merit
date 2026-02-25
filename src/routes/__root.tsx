@@ -41,7 +41,7 @@ function RootComponent() {
   }, [user, pathname])
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col overflow-x-hidden">
       {!isAuthRoute && <Header />}
       <main
         className={

@@ -18,12 +18,17 @@ function VerticalConnector() {
 function ChildrenGroup({ nodes, level, parentKey }: MatrixLevelProps) {
   if (!nodes.length) return null
 
+  const connectorInset = `${100 / (2 * nodes.length)}%`
+
   return (
     <div className="flex flex-col items-center w-full">
       <VerticalConnector />
       <div className="relative flex items-start justify-center w-full">
         {nodes.length > 1 && (
-          <div className="absolute top-7 h-px bg-gray-200 left-1/4 right-1/4" />
+          <div
+            className="absolute top-7 h-px bg-gray-200"
+            style={{ left: connectorInset, right: connectorInset }}
+          />
         )}
         {nodes.map((node, i) => {
           const key = nodeKey(node, i, parentKey)
