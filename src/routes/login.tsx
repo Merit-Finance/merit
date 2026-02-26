@@ -167,7 +167,7 @@ function TheForm({
             <button
               type="button"
               onClick={onSwitchToPassword}
-              className="hover:text-primary transition-colors"
+              className="hover:text-primary cursor-pointer transition-colors"
             >
               Use password instead
             </button>
