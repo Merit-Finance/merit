@@ -10,6 +10,7 @@ export interface UserData {
   phoneNumber: string
   userName: string
   currentLevel: number
+  hasSetPin: boolean
   address: string
   role: string
   wallet: Wallet[]

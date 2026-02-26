@@ -27,6 +27,8 @@ const AUTH_ROUTES = [
 
 const PUBLIC_ROUTES = ['/']
 
+const TOKEN_ROUTES = ['/reset-transfer-pin']
+
 function RootComponent() {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   const { user } = useAuthStore()
@@ -34,21 +36,23 @@ function RootComponent() {
 
   const isAuthRoute = AUTH_ROUTES.includes(pathname)
   const isPublicRoute = PUBLIC_ROUTES.includes(pathname)
-  const isAppRoute = !isAuthRoute && !isPublicRoute
+  const isTokenRoute = TOKEN_ROUTES.includes(pathname)
+  const isAppRoute = !isAuthRoute && !isPublicRoute && !isTokenRoute
 
   useEffect(() => {
     // Not logged in and trying to access app routes → send to login
     if (!user && isAppRoute) {
       navigate({ to: '/login' })
     }
-    // Logged in and on an auth page (login, signup etc) → send to dashboard
+    // Logged in and on an auth page → send to dashboard
     if (user && isAuthRoute) {
       navigate({ to: '/dashboard' })
     }
-    // Landing page: if already logged in, skip straight to dashboard
+    // Landing page: if already logged in → send to dashboard
     if (user && isPublicRoute) {
       navigate({ to: '/dashboard' })
     }
+    // TOKEN_ROUTES: no redirect — let anyone through logged in or not
   }, [user, pathname])
 
   return (

@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifyRouteImport } from './routes/verify'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as ResetTransferPinRouteImport } from './routes/reset-transfer-pin'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ReferralsRouteImport } from './routes/referrals'
 import { Route as ProfileRouteImport } from './routes/profile'
@@ -30,6 +31,11 @@ const VerifyRoute = VerifyRouteImport.update({
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetTransferPinRoute = ResetTransferPinRouteImport.update({
+  id: '/reset-transfer-pin',
+  path: '/reset-transfer-pin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -94,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRoute
   '/referrals': typeof ReferralsRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/reset-transfer-pin': typeof ResetTransferPinRoute
   '/signup': typeof SignupRoute
   '/verify': typeof VerifyRoute
 }
@@ -108,6 +115,7 @@ export interface FileRoutesByTo {
   '/profile': typeof ProfileRoute
   '/referrals': typeof ReferralsRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/reset-transfer-pin': typeof ResetTransferPinRoute
   '/signup': typeof SignupRoute
   '/verify': typeof VerifyRoute
 }
@@ -123,6 +131,7 @@ export interface FileRoutesById {
   '/profile': typeof ProfileRoute
   '/referrals': typeof ReferralsRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/reset-transfer-pin': typeof ResetTransferPinRoute
   '/signup': typeof SignupRoute
   '/verify': typeof VerifyRoute
 }
@@ -139,6 +148,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/referrals'
     | '/reset-password'
+    | '/reset-transfer-pin'
     | '/signup'
     | '/verify'
   fileRoutesByTo: FileRoutesByTo
@@ -153,6 +163,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/referrals'
     | '/reset-password'
+    | '/reset-transfer-pin'
     | '/signup'
     | '/verify'
   id:
@@ -167,6 +178,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/referrals'
     | '/reset-password'
+    | '/reset-transfer-pin'
     | '/signup'
     | '/verify'
   fileRoutesById: FileRoutesById
@@ -182,6 +194,7 @@ export interface RootRouteChildren {
   ProfileRoute: typeof ProfileRoute
   ReferralsRoute: typeof ReferralsRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  ResetTransferPinRoute: typeof ResetTransferPinRoute
   SignupRoute: typeof SignupRoute
   VerifyRoute: typeof VerifyRoute
 }
@@ -200,6 +213,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-transfer-pin': {
+      id: '/reset-transfer-pin'
+      path: '/reset-transfer-pin'
+      fullPath: '/reset-transfer-pin'
+      preLoaderRoute: typeof ResetTransferPinRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -286,6 +306,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRoute: ProfileRoute,
   ReferralsRoute: ReferralsRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  ResetTransferPinRoute: ResetTransferPinRoute,
   SignupRoute: SignupRoute,
   VerifyRoute: VerifyRoute,
 }

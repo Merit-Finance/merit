@@ -52,10 +52,38 @@ export const transactionService = {
     )
     return response.data
   },
+
   setTransferPin: async (
     pin: string,
   ): Promise<{ success: boolean; message: string }> => {
     const response = await apiClient.post('/users/transfer-pin', { pin })
+    return response.data
+  },
+
+  requestPinReset: async (
+    password: string,
+  ): Promise<{ success: boolean; message: string }> => {
+    const response = await apiClient.post(
+      '/users/transfer-pin/forgot/request',
+      {
+        password,
+      },
+    )
+    return response.data
+  },
+  confirmPinReset: async (
+    token: string,
+    newPin: string,
+  ): Promise<{ success: boolean; message: string }> => {
+    const response = await apiClient.post(
+      '/users/transfer-pin/forgot/confirm',
+      { token, newPin },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    )
     return response.data
   },
 }
