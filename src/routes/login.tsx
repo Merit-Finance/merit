@@ -595,7 +595,7 @@ function LoginPage() {
               </span>
             </div>
             <h1 className="text-3xl font-bold text-white leading-tight tracking-tight">
-              Your money <span className="text-primary">works harder</span>{" "}
+              Your money <span className="text-primary">works harder</span>{' '}
               here.
             </h1>
             <div className="flex gap-5 mt-4">
@@ -639,7 +639,10 @@ function LoginPage() {
             />
           </div>
 
-          <div className="relative z-10 flex items-center gap-2.5">
+          <div
+            onClick={() => navigate({ to: '/' })}
+            className="relative z-10 flex items-center gap-2.5 cursor-pointer"
+          >
             <MeritLogo className="h-6 w-6 text-[#008FE9]" />
             <span className="text-white font-semibold text-lg">
               Merit Finance
