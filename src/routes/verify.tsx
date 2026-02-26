@@ -39,7 +39,6 @@ function VerifyEmailPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4">
-      {/* Logo */}
       <div className="flex items-center gap-2.5 mb-10">
         <MeritLogo className="h-7 w-7 text-[#008FE9]" />
         <span className="text-gray-900 font-semibold text-xl">
@@ -48,7 +47,6 @@ function VerifyEmailPage() {
       </div>
 
       <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
-        {/* Loading */}
         {status === 'loading' && (
           <>
             <div className="flex justify-center mb-5">
@@ -63,7 +61,6 @@ function VerifyEmailPage() {
           </>
         )}
 
-        {/* Success */}
         {status === 'success' && (
           <>
             <div className="flex justify-center mb-5">
@@ -86,7 +83,6 @@ function VerifyEmailPage() {
           </>
         )}
 
-        {/* Error */}
         {status === 'error' && (
           <>
             <div className="flex justify-center mb-5">
