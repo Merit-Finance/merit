@@ -280,10 +280,7 @@ function EarningsPage() {
           open={upgradeLevel !== null}
           onOpenChange={(open) => !open && setUpgradeLevel(null)}
           level={selectedLevel.level}
-          cost={
-            selectedLevel.cost +
-            getPlatformFee(selectedLevel.level, selectedLevel.cost)
-          }
+          cost={selectedLevel.cost}
           onSuccess={handleUpgradeSuccess}
         />
       )}

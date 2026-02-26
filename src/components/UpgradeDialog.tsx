@@ -12,8 +12,6 @@ interface UpgradeDialogProps {
   onSuccess?: () => void
 }
 
-const FEE_RATE = 0.1
-
 export function UpgradeDialog({
   open,
   onOpenChange,
@@ -24,9 +22,8 @@ export function UpgradeDialog({
   const { user } = useAuthStore()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  console.log(error)
 
-  const platformFee = cost * FEE_RATE
+  const platformFee = level === 1 ? 5 : cost * 0.1
   const total = cost + platformFee
 
   const bullets = [
@@ -38,9 +35,9 @@ export function UpgradeDialog({
 
   const getUserInitials = () => {
     if (!user?.name) return 'U'
-    const names = user.name.split(' ')
+    const names = user.name.trim().split(' ').filter(Boolean)
     if (names.length >= 2) return `${names[0][0]}${names[1][0]}`.toUpperCase()
-    return user.name[0].toUpperCase()
+    return names[0][0].toUpperCase()
   }
 
   const handleConfirm = async () => {
@@ -107,7 +104,9 @@ export function UpgradeDialog({
               </span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-500">Platform Fee (10%):</span>
+              <span className="text-gray-500">
+                Platform Fee {level === 1 ? '(fixed)' : '(10%)'}:
+              </span>
               <span className="text-gray-900 font-medium">
                 ${platformFee.toFixed(2)}
               </span>
@@ -128,6 +127,12 @@ export function UpgradeDialog({
               </div>
             ))}
           </div>
+
+          {error && (
+            <p className="text-xs text-red-500 bg-red-50 border border-red-100 rounded-lg px-3 py-2 mb-4">
+              {error}
+            </p>
+          )}
 
           <button
             onClick={handleConfirm}
