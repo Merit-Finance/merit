@@ -71,6 +71,7 @@ export function HowItWorks() {
                 key={highlight}
                 className={`flex flex-col ${imageLeft ? 'sm:flex-row-reverse' : 'sm:flex-row'} items-center gap-10`}
               >
+                {/* Text side */}
                 <div className="w-full sm:flex-1 flex flex-col justify-center px-4">
                   <h3 className="text-2xl sm:text-4xl font-semibold text-[#19415A] leading-snug mb-3">
                     {highlightFirst ? (
@@ -90,6 +91,7 @@ export function HowItWorks() {
                   </p>
                 </div>
 
+                {/* Image side */}
                 <div className="w-full sm:flex-1 flex items-center justify-center">
                   <div className="relative w-full max-w-xl">
                     <div className="rounded-3xl bg-[#D6E8FF] w-full h-80 sm:h-[420px]" />
@@ -103,7 +105,7 @@ export function HowItWorks() {
                       <img
                         src={image}
                         alt={title}
-                        className="w-64 sm:w-80 lg:w-96 h-auto object-contain drop-shadow-xl"
+                        className="w-56 sm:w-auto object-contain drop-shadow-xl"
                       />
                     </div>
                   </div>
