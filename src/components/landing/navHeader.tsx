@@ -23,13 +23,13 @@ export function NavHeader() {
 
   return (
     <div className="w-full px-4 sm:px-6 lg:px-8 pt-4 sm:pt-5">
-      <nav className="mx-auto container bg-white rounded-xl border border-white/80 px-5 sm:px-8 py-3.5 flex items-center justify-between">
+      <nav className="mx-auto container bg-white rounded-lg border border-white/80 px-5 sm:px-8 py-3.5 flex items-center justify-between">
         <button
           onClick={() => handleScroll('#home')}
           className="flex items-center gap-2 shrink-0"
         >
           <MeritLogo className="h-6 w-6 sm:h-8 sm:w-8 text-[#008FE9]" />
-          <span className="text-[#149AEE] font-bold text-lg tracking-tight">
+          <span className="text-[#149AEE] font-medium text-lg tracking-tight">
             Merit Finance
           </span>
         </button>
@@ -39,7 +39,7 @@ export function NavHeader() {
             <button
               key={link.label}
               onClick={() => handleScroll(link.href)}
-              className="text-gray-500 hover:text-[#149AEE] text-sm font-medium transition-colors"
+              className="text-[#008FE9] hover:text-[#149AEE] text-sm font-medium transition-colors"
             >
               {link.label}
             </button>
@@ -49,7 +49,7 @@ export function NavHeader() {
         <div className="hidden md:flex items-center gap-3">
           <button
             onClick={() => navigate({ to: '/login' })}
-            className="px-5 py-2 text-sm font-semibold text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+            className="px-5 py-2 text-sm font-medium text-[#008FE9] border border-[#008FE9] cursor-pointer rounded-lg hover:bg-gray-50 transition-colors"
           >
             Log in
           </button>
@@ -99,7 +99,7 @@ export function NavHeader() {
                 setMobileOpen(false)
                 navigate({ to: '/signup' })
               }}
-              className="flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-[#149AEE] hover:bg-[#0B7FD4] rounded-lg transition-colors"
+              className="flex-1 px-4 py-2.5 text-sm font-medium cursor-pointer text-white bg-[#008FE9] hover:bg-[#0B7FD4] rounded-lg transition-colors"
             >
               Get Started
             </button>
