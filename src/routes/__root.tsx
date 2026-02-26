@@ -18,41 +18,52 @@ export const Route = createRootRoute<MyRouterContext>({
 })
 
 const AUTH_ROUTES = [
-  '/',
+  '/login',
   '/signup',
   '/forgot-password',
   '/reset-password',
   '/verify',
 ]
 
+const PUBLIC_ROUTES = ['/']
+
 function RootComponent() {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   const { user } = useAuthStore()
   const navigate = useNavigate()
+
   const isAuthRoute = AUTH_ROUTES.includes(pathname)
+  const isPublicRoute = PUBLIC_ROUTES.includes(pathname)
+  const isAppRoute = !isAuthRoute && !isPublicRoute
 
   useEffect(() => {
-    if (!user && !isAuthRoute) {
-      navigate({ to: '/' })
+    // Not logged in and trying to access app routes → send to login
+    if (!user && isAppRoute) {
+      navigate({ to: '/login' })
     }
+    // Logged in and on an auth page (login, signup etc) → send to dashboard
     if (user && isAuthRoute) {
+      navigate({ to: '/dashboard' })
+    }
+    // Landing page: if already logged in, skip straight to dashboard
+    if (user && isPublicRoute) {
       navigate({ to: '/dashboard' })
     }
   }, [user, pathname])
 
   return (
     <div className="flex min-h-screen flex-col">
-      {!isAuthRoute && <Header />}
+      {isAppRoute && <Header />}
       <main
         className={
-          !isAuthRoute
+          isAppRoute
             ? 'flex-1 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 max-w-[1500px] mx-auto w-full'
             : 'flex-1'
         }
       >
         <Outlet />
       </main>
-      {!isAuthRoute && <Footer />}
+      {isAppRoute && <Footer />}
       {import.meta.env.DEV && <TanStackRouterDevtools />}
     </div>
   )

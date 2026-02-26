@@ -38,7 +38,7 @@ export const userService = {
   },
 
   levelUp: async (level: number): Promise<LevelUpResponse> => {
-    const response = await apiClient.post<LevelUpResponse>('/users/level-up', {
+    const response = await apiClient.put<LevelUpResponse>('/users/level-up', {
       level,
     })
     return response.data
