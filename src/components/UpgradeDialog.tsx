@@ -137,7 +137,7 @@ export function UpgradeDialog({
           <button
             onClick={handleConfirm}
             disabled={isLoading}
-            className="w-full bg-gray-900 hover:bg-gray-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white py-3 rounded-xl font-semibold text-sm transition-colors flex items-center justify-center gap-2"
+            className="w-full bg-primary hover:bg-primary-light disabled:bg-gray-400 disabled:cursor-not-allowed text-white py-3 rounded-xl font-semibold text-sm transition-colors flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <>
