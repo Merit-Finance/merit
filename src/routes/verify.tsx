@@ -81,7 +81,7 @@ function VerifyEmailPage() {
               asChild
               className="w-full bg-primary hover:bg-primary-light text-white py-5 rounded-xl font-semibold"
             >
-              <Link to="/">Go to Sign In</Link>
+              <Link to="/login">Go to Sign In</Link>
             </Button>
           </>
         )}
@@ -111,7 +111,7 @@ function VerifyEmailPage() {
               <p className="text-xs text-gray-400">
                 Already verified?{' '}
                 <Link
-                  to="/"
+                  to="/login"
                   className="text-primary font-semibold hover:underline"
                 >
                   Sign in
