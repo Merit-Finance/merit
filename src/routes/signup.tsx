@@ -386,7 +386,7 @@ function SignupPage() {
       <RegistrationSuccessModal
         open={showSuccessModal}
         email={formData.email}
-        onGoToSignIn={() => navigate({ to: '/' })}
+        onGoToSignIn={() => navigate({ to: '/login' })}
         onCheckEmail={() => setShowSuccessModal(false)}
       />
       {/* Mobile */}
