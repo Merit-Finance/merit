@@ -319,7 +319,6 @@ function SignupPage() {
           )}
         </div>
 
-        {/* Referral Code — only shown if present in URL (read-only) or always visible for manual entry */}
         <div>
           <Label
             htmlFor="referralCode"
@@ -404,6 +403,12 @@ function SignupPage() {
             }}
           />
           <div className="relative z-10">
+            <div className="flex items-center gap-2 mb-5">
+              <MeritLogo className="h-6 w-6 text-[#008FE9]" />
+              <span className="text-white font-semibold text-base">
+                Merit Finance
+              </span>
+            </div>
             <div className="inline-flex items-center gap-2 bg-white/10 border border-white/15 rounded-full px-3 py-1 mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
               <span className="text-white/70 text-xs">Join the network</span>
@@ -455,7 +460,10 @@ function SignupPage() {
             />
           </div>
 
-          <div className="relative z-10 flex items-center gap-2.5">
+          <div
+            onClick={() => navigate({ to: '/' })}
+            className="relative z-10 flex items-center gap-2.5 cursor-pointer"
+          >
             <MeritLogo className="h-6 w-6 text-[#008FE9]" />
             <span className="text-white font-semibold text-lg">
               Merit Finance
