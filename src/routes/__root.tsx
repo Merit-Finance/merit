@@ -23,6 +23,8 @@ const AUTH_ROUTES = [
   '/forgot-password',
   '/reset-password',
   '/verify',
+  '/privacy-policy',
+  '/terms-of-use',
 ]
 
 const PUBLIC_ROUTES = ['/']

@@ -29,13 +29,13 @@ export function Footer() {
           </p>
           <div className="flex items-center gap-5">
             <button
-              onClick={() => navigate({ to: '/' })}
+              onClick={() => navigate({ to: '/terms-of-use' })}
               className="text-gray-400 cursor-pointer hover:text-[#149AEE] text-xs transition-colors"
             >
               Term of use
             </button>
             <button
-              onClick={() => navigate({ to: '/' })}
+              onClick={() => navigate({ to: '/privacy-policy' })}
               className="text-gray-400 cursor-pointer hover:text-[#149AEE] text-xs transition-colors"
             >
               Privacy policy

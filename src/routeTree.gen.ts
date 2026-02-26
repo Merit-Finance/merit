@@ -10,11 +10,13 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifyRouteImport } from './routes/verify'
+import { Route as TermsOfUseRouteImport } from './routes/terms-of-use'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ResetTransferPinRouteImport } from './routes/reset-transfer-pin'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ReferralsRouteImport } from './routes/referrals'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as MatrixRouteImport } from './routes/matrix'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
@@ -26,6 +28,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const VerifyRoute = VerifyRouteImport.update({
   id: '/verify',
   path: '/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsOfUseRoute = TermsOfUseRouteImport.update({
+  id: '/terms-of-use',
+  path: '/terms-of-use',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupRoute = SignupRouteImport.update({
@@ -51,6 +58,11 @@ const ReferralsRoute = ReferralsRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MatrixRoute = MatrixRouteImport.update({
@@ -97,11 +109,13 @@ export interface FileRoutesByFullPath {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/matrix': typeof MatrixRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/profile': typeof ProfileRoute
   '/referrals': typeof ReferralsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/reset-transfer-pin': typeof ResetTransferPinRoute
   '/signup': typeof SignupRoute
+  '/terms-of-use': typeof TermsOfUseRoute
   '/verify': typeof VerifyRoute
 }
 export interface FileRoutesByTo {
@@ -112,11 +126,13 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/matrix': typeof MatrixRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/profile': typeof ProfileRoute
   '/referrals': typeof ReferralsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/reset-transfer-pin': typeof ResetTransferPinRoute
   '/signup': typeof SignupRoute
+  '/terms-of-use': typeof TermsOfUseRoute
   '/verify': typeof VerifyRoute
 }
 export interface FileRoutesById {
@@ -128,11 +144,13 @@ export interface FileRoutesById {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/matrix': typeof MatrixRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/profile': typeof ProfileRoute
   '/referrals': typeof ReferralsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/reset-transfer-pin': typeof ResetTransferPinRoute
   '/signup': typeof SignupRoute
+  '/terms-of-use': typeof TermsOfUseRoute
   '/verify': typeof VerifyRoute
 }
 export interface FileRouteTypes {
@@ -145,11 +163,13 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/matrix'
+    | '/privacy-policy'
     | '/profile'
     | '/referrals'
     | '/reset-password'
     | '/reset-transfer-pin'
     | '/signup'
+    | '/terms-of-use'
     | '/verify'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -160,11 +180,13 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/matrix'
+    | '/privacy-policy'
     | '/profile'
     | '/referrals'
     | '/reset-password'
     | '/reset-transfer-pin'
     | '/signup'
+    | '/terms-of-use'
     | '/verify'
   id:
     | '__root__'
@@ -175,11 +197,13 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/matrix'
+    | '/privacy-policy'
     | '/profile'
     | '/referrals'
     | '/reset-password'
     | '/reset-transfer-pin'
     | '/signup'
+    | '/terms-of-use'
     | '/verify'
   fileRoutesById: FileRoutesById
 }
@@ -191,11 +215,13 @@ export interface RootRouteChildren {
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   MatrixRoute: typeof MatrixRoute
+  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   ProfileRoute: typeof ProfileRoute
   ReferralsRoute: typeof ReferralsRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   ResetTransferPinRoute: typeof ResetTransferPinRoute
   SignupRoute: typeof SignupRoute
+  TermsOfUseRoute: typeof TermsOfUseRoute
   VerifyRoute: typeof VerifyRoute
 }
 
@@ -206,6 +232,13 @@ declare module '@tanstack/react-router' {
       path: '/verify'
       fullPath: '/verify'
       preLoaderRoute: typeof VerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms-of-use': {
+      id: '/terms-of-use'
+      path: '/terms-of-use'
+      fullPath: '/terms-of-use'
+      preLoaderRoute: typeof TermsOfUseRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup': {
@@ -241,6 +274,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy-policy': {
+      id: '/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PrivacyPolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/matrix': {
@@ -303,11 +343,13 @@ const rootRouteChildren: RootRouteChildren = {
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   MatrixRoute: MatrixRoute,
+  PrivacyPolicyRoute: PrivacyPolicyRoute,
   ProfileRoute: ProfileRoute,
   ReferralsRoute: ReferralsRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   ResetTransferPinRoute: ResetTransferPinRoute,
   SignupRoute: SignupRoute,
+  TermsOfUseRoute: TermsOfUseRoute,
   VerifyRoute: VerifyRoute,
 }
 export const routeTree = rootRouteImport
