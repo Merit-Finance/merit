@@ -19,11 +19,10 @@ function getPlatformFee(level: number, cost: number): number {
 
 const levelConfig = [
   { level: 1, maxPositions: 2, cost: 20, earnings: '$40.00' },
-  { level: 2, maxPositions: 4, cost: 30, earnings: '$60.00' },
-  { level: 3, maxPositions: 8, cost: 80, earnings: '$0.00' },
-  { level: 4, maxPositions: 16, cost: 300, earnings: '$0.00' },
+  { level: 2, maxPositions: 4, cost: 30, earnings: '$120.00' },
+  { level: 3, maxPositions: 8, cost: 80, earnings: '$640.00' },
+  { level: 4, maxPositions: 16, cost: 300, earnings: '$4800.00' },
 ]
-
 function getDepthNodes(node: MatrixNode, depth: number): MatrixNode[] {
   if (node.depth === depth) return [node]
   return node.children.flatMap((c) => getDepthNodes(c, depth))
@@ -61,6 +60,7 @@ function LevelCard({
   earnings,
   matrix,
   mainBalance,
+  currentLevel,
   onUpgradeClick,
   onInsufficientBalance,
 }: {
@@ -70,6 +70,7 @@ function LevelCard({
   earnings: string
   matrix: MatrixNode | null
   mainBalance: number | null
+  currentLevel: number
   onUpgradeClick: (level: number) => void
   onInsufficientBalance: (required: number, available: number) => void
 }) {
@@ -84,7 +85,9 @@ function LevelCard({
   const nodes = matrix ? getDepthNodes(matrix, level + 1) : []
   const paidCount = nodes.filter((n) => n.hasPaid).length
   const pct = (paidCount / maxPositions) * 100
-  const hasSubscribed = matrix ? level <= matrix.depth : false
+
+  const hasSubscribed = currentLevel >= level
+
   const handleUpgradeClick = () => {
     const balance = mainBalance ?? 0
     if (balance < totalCost) {
@@ -205,10 +208,11 @@ function EarningsPage() {
     fetchBalanceStat,
     fetchMainBalance,
   } = useBalanceStore()
-  const { fetchUser } = useUserStore()
+  const { userData, fetchUser } = useUserStore()
   const { matrixData, fetchMatrix } = useMatrixStore()
 
   const selectedLevel = levelConfig.find((l) => l.level === upgradeLevel)
+  const currentLevel = userData?.currentLevel ?? 0
 
   useEffect(() => {
     fetchBalanceStat()
@@ -277,6 +281,9 @@ function EarningsPage() {
           <h2 className="text-gray-900 font-semibold text-base">
             Level Progress
           </h2>
+          <span className="text-xs text-gray-400 bg-gray-50 border border-[#E8E8E8] px-3 py-1 rounded-full">
+            Current: Level {currentLevel}
+          </span>
         </div>
 
         <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 mb-4 text-xs text-blue-700 leading-relaxed">
@@ -292,6 +299,7 @@ function EarningsPage() {
               {...lvl}
               matrix={matrixData}
               mainBalance={mainBalance}
+              currentLevel={currentLevel}
               onUpgradeClick={setUpgradeLevel}
               onInsufficientBalance={handleInsufficientBalance}
             />
