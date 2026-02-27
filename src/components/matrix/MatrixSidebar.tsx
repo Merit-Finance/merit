@@ -46,7 +46,7 @@ export function MatrixSidebar({ levelCounts }: MatrixSidebarProps) {
                   {positions} positions
                 </p>
                 <p className="text-xs text-gray-400">
-                  filled: {levelCounts[level] ?? 0}
+                  filled: {levelCounts[level + 1] ?? 0}
                 </p>
               </div>
             </div>
