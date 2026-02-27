@@ -17,6 +17,7 @@ export const Route = createFileRoute('/referrals')({
 
 function ReferralsPage() {
   const { referralList, referralStat, isLoading, fetchAll } = useReferralStore()
+
   const { userData, fetchUser } = useUserStore()
   const [copied, setCopied] = useState(false)
 
@@ -42,11 +43,9 @@ function ReferralsPage() {
           url: referralLink,
         })
       } catch (err) {
-        // User cancelled or error — fallback to copy
         copyToClipboard()
       }
     } else {
-      // Browser doesn't support Web Share API — fallback to copy
       copyToClipboard()
     }
   }
@@ -73,7 +72,7 @@ function ReferralsPage() {
     {
       id: 3,
       label: 'Referral Earnings',
-      value: `$${parseFloat(referralStat?.referralEarnings ?? '0').toFixed(2)}`,
+      value: `$${parseFloat(referralStat?.referralBalance ?? '0').toFixed(2)}`,
       sub: '$2 per referral',
       icon: TrendingUp,
       iconColor: 'text-purple-500',
@@ -241,7 +240,7 @@ function ReferralsPage() {
                   </div>
                 </div>
                 <span className="bg-blue-50 text-blue-600 text-xs font-medium px-2.5 py-1 rounded-full border border-blue-100">
-                  Level {ref.level}
+                  Tier {ref.tier}
                 </span>
               </div>
             ))}

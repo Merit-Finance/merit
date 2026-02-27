@@ -2,6 +2,7 @@ export interface ReferralUser {
   id: string
   name: string
   username: string
+  tier?: string
   joinedAt: string
   status: 'active' | 'pending'
   level?: string
@@ -20,6 +21,7 @@ export interface ReferralTier {
 
 export interface ReferralStat {
   totalReferrals: number
+  referralBalance: string
   activeReferrals: number
   referralEarnings: string
   tiers: ReferralTier[]
