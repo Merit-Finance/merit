@@ -24,6 +24,7 @@ function MatrixPage() {
       setLoading(true)
       try {
         const response = await matrixService.getMatrix()
+        console.log('response', response)
         if (response.success) setMatrixData(padMatrix(response.data))
       } catch (err: any) {
         setError(err.response?.data?.message || 'Failed to load matrix.')

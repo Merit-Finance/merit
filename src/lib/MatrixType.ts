@@ -1,7 +1,8 @@
 export interface MatrixNode {
   id: string | null
   name: string | null
-  level: number
+  tier: number
+  position: number | null
   completed: boolean
   active: boolean
   isEmpty: boolean
@@ -58,7 +59,7 @@ export function countByLevel(node: MatrixNode | null): Record<number, number> {
   if (!node) return {}
   const counts: Record<number, number> = {}
   const traverse = (n: MatrixNode) => {
-    if (n.active && n.id) counts[n.level] = (counts[n.level] || 0) + 1
+    if (n.active && n.id) counts[n.tier] = (counts[n.tier] || 0) + 1
     n.children?.forEach(traverse)
   }
   node.children?.forEach(traverse)
@@ -66,14 +67,15 @@ export function countByLevel(node: MatrixNode | null): Record<number, number> {
 }
 
 export function padMatrix(node: MatrixNode, maxDepth: number = 5): MatrixNode {
-  if (node.level >= maxDepth) return { ...node, children: [] }
+  if (node.tier >= maxDepth) return { ...node, children: [] }
 
   const children = [...(node.children ?? [])]
   while (children.length < 2) {
     children.push({
       id: null,
       name: null,
-      level: node.level + 1,
+      tier: node.tier + 1,
+      position: null,
       completed: false,
       active: false,
       isEmpty: true,
