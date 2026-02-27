@@ -237,7 +237,7 @@ function EarningsPage() {
     {
       id: 1,
       label: 'Overall Balance',
-      amount: `$${(balanceStat?.totalEarn ?? 0).toFixed(2)}`,
+      amount: `$${(balanceStat?.overallBalance ?? 0).toFixed(2)}`,
     },
     {
       id: 2,
@@ -247,7 +247,7 @@ function EarningsPage() {
     {
       id: 3,
       label: 'Referral Earnings',
-      amount: `$${(balanceStat?.totalWithdraw ?? 0).toFixed(2)}`,
+      amount: `$${(balanceStat?.referralEarnings ?? 0).toFixed(2)}`,
     },
   ]
 

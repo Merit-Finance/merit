@@ -14,6 +14,8 @@ export interface BalanceResponse {
 
 export interface BalanceStat {
   totalWithdraw: number
+  referralEarnings: number
+  overallBalance: number
   totalEarn: number
 }
 
