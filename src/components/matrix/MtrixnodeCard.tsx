@@ -67,7 +67,7 @@ export function MatrixNodeCard({ node, isRoot = false }: MatrixNodeCardProps) {
         {isRoot ? 'You' : node.name || 'Empty'}
       </span>
       {!isRoot && (
-        <span className="text-[10px] text-gray-400">L{node.tier - 1}</span>
+        <span className="text-[10px] text-gray-400">L{node.level - 1}</span>
       )}
     </div>
   )
