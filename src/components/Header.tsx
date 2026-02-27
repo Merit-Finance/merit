@@ -28,7 +28,6 @@ export default function Header() {
     <>
       <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
         <div className="px-4 sm:px-6 py-3 flex items-center justify-between max-w-[1400px] mx-auto">
-          {/* Left side: hamburger (mobile) + logo */}
           <div className="flex items-center gap-2">
             {isAuthenticated && (
               <button
@@ -169,13 +168,11 @@ export default function Header() {
             />
           )}
 
-          {/* Drawer */}
           <div
             className={`fixed top-0 left-0 h-full w-72 bg-white z-50 shadow-2xl transform transition-transform duration-300 ease-in-out lg:hidden ${
               mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
             }`}
           >
-            {/* Drawer Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
@@ -200,7 +197,6 @@ export default function Header() {
               </button>
             </div>
 
-            {/* Nav Links */}
             <nav className="px-3 py-4 flex flex-col gap-1">
               {navItems.map((item) => {
                 const Icon = item.icon
@@ -222,7 +218,6 @@ export default function Header() {
               })}
             </nav>
 
-            {/* Drawer Footer */}
             <div className="absolute bottom-0 left-0 right-0 px-3 py-4 border-t border-gray-100 flex flex-col gap-1">
               <Link
                 to="/profile"
