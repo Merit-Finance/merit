@@ -11,7 +11,7 @@ export function MatrixNodeCard({ node, isRoot = false }: MatrixNodeCardProps) {
   return (
     <div className="flex flex-col items-center">
       <div className="relative">
-        {node.active && node.id && !isRoot && (
+        {node.hasPaid && !isRoot && (
           <span className="absolute -top-1 -right-1 z-10 w-4 h-4 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
             <svg
               className="w-2 h-2 text-white"

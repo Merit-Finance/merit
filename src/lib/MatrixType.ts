@@ -1,11 +1,12 @@
 export interface MatrixNode {
   id: string | null
   name: string | null
-  level: number // tree depth - use this for traversal
-  tier: number // membership tier - just for display
+  level: number
+  tier: number
   position: number | null
   completed: boolean
   active: boolean
+  hasPaid: boolean // new
   isEmpty: boolean
   children: MatrixNode[]
 }
@@ -81,6 +82,7 @@ export function padMatrix(node: MatrixNode, maxDepth: number = 5): MatrixNode {
       completed: false,
       active: false,
       isEmpty: true,
+      hasPaid: false,
       children: [],
     })
   }
