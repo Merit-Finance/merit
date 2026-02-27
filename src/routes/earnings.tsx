@@ -27,28 +27,28 @@ function getDepthNodes(node: MatrixNode, depth: number): MatrixNode[] {
   if (node.depth === depth) return [node]
   return node.children.flatMap((c) => getDepthNodes(c, depth))
 }
-
 function getLevelStatus(
   level: number,
   matrix: MatrixNode | null,
 ): 'complete' | 'active' | 'locked' {
   if (!matrix) return level === 1 ? 'active' : 'locked'
 
+  const nodes = getDepthNodes(matrix, level + 1)
+  const paidCount = nodes.filter((n) => n.hasPaid).length
+  const maxPositions =
+    levelConfig.find((l) => l.level === level)?.maxPositions ?? 2
+
   if (level === 1) {
-    if (matrix.completed) return 'complete'
+    if (paidCount >= maxPositions) return 'complete'
     return 'active'
   }
 
   const prevComplete = getLevelStatus(level - 1, matrix) === 'complete'
   if (!prevComplete) return 'locked'
 
-  const nodes = getDepthNodes(matrix, level + 1)
-  const allCompleted = nodes.length > 0 && nodes.every((n) => n.completed)
-  if (allCompleted) return 'complete'
-
+  if (paidCount >= maxPositions) return 'complete'
   return 'active'
 }
-
 function getLockedBy(level: number) {
   return `Complete Level ${level - 1} First`
 }
