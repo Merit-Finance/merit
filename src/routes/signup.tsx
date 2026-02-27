@@ -186,7 +186,6 @@ function SignupPage() {
         </div>
       )}
       <form onSubmit={handleSubmit} className="space-y-3.5">
-        {/* Text fields */}
         {textFields.map(({ name, placeholder, type, icon: Icon, label }) => (
           <div key={name}>
             <Label
@@ -216,7 +215,6 @@ function SignupPage() {
           </div>
         ))}
 
-        {/* Phone number with country code */}
         <div>
           <Label
             htmlFor="phoneNumber"
@@ -241,7 +239,6 @@ function SignupPage() {
           )}
         </div>
 
-        {/* Password */}
         <div>
           <Label
             htmlFor="password"
@@ -280,7 +277,6 @@ function SignupPage() {
           )}
         </div>
 
-        {/* Confirm Password */}
         <div>
           <Label
             htmlFor="confirmPassword"

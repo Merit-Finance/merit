@@ -5,6 +5,8 @@ import { UpgradeDialog } from '@/components/UpgradeDialog'
 import { useBalanceStore } from '@/stores/balance.store'
 import { useUserStore } from '@/stores/user.store'
 import { InsufficientBalanceDialog } from '@/components/InsuffucientBalanceDialog'
+import { useMatrixStore } from '@/stores/matrix.store'
+import { MatrixNode } from '@/lib/MatrixType'
 
 export const Route = createFileRoute('/earnings')({
   component: EarningsPage,
@@ -22,10 +24,30 @@ const levelConfig = [
   { level: 4, maxPositions: 16, cost: 300, earnings: '$0.00' },
 ]
 
-function getLevelStatus(level: number, currentLevel: number) {
-  if (level <= currentLevel) return 'complete'
-  if (level === currentLevel + 1) return 'active'
-  return 'locked'
+function getDepthNodes(node: MatrixNode, depth: number): MatrixNode[] {
+  if (node.depth === depth) return [node]
+  return node.children.flatMap((c) => getDepthNodes(c, depth))
+}
+
+function getLevelStatus(
+  level: number,
+  matrix: MatrixNode | null,
+): 'complete' | 'active' | 'locked' {
+  if (!matrix) return level === 1 ? 'active' : 'locked'
+
+  if (level === 1) {
+    if (matrix.completed) return 'complete'
+    return 'active'
+  }
+
+  const prevComplete = getLevelStatus(level - 1, matrix) === 'complete'
+  if (!prevComplete) return 'locked'
+
+  const nodes = getDepthNodes(matrix, level + 1)
+  const allCompleted = nodes.length > 0 && nodes.every((n) => n.completed)
+  if (allCompleted) return 'complete'
+
+  return 'active'
 }
 
 function getLockedBy(level: number) {
@@ -37,7 +59,7 @@ function LevelCard({
   maxPositions,
   cost,
   earnings,
-  currentLevel,
+  matrix,
   mainBalance,
   onUpgradeClick,
   onInsufficientBalance,
@@ -46,12 +68,12 @@ function LevelCard({
   maxPositions: number
   cost: number
   earnings: string
-  currentLevel: number
+  matrix: MatrixNode | null
   mainBalance: number | null
   onUpgradeClick: (level: number) => void
   onInsufficientBalance: (required: number, available: number) => void
 }) {
-  const status = getLevelStatus(level, currentLevel)
+  const status = getLevelStatus(level, matrix)
   const isComplete = status === 'complete'
   const isLocked = status === 'locked'
   const isActive = status === 'active'
@@ -59,9 +81,10 @@ function LevelCard({
   const platformFee = getPlatformFee(level, cost)
   const totalCost = cost + platformFee
 
-  const positions = isComplete ? maxPositions : 0
-  const pct = (positions / maxPositions) * 100
-
+  const nodes = matrix ? getDepthNodes(matrix, level + 1) : []
+  const paidCount = nodes.filter((n) => n.hasPaid).length
+  const pct = (paidCount / maxPositions) * 100
+  const hasSubscribed = matrix ? level <= matrix.depth : false
   const handleUpgradeClick = () => {
     const balance = mainBalance ?? 0
     if (balance < totalCost) {
@@ -85,18 +108,12 @@ function LevelCard({
         <div className="flex items-center justify-between mb-1.5">
           <span className="text-gray-400 text-sm">Progress</span>
           <span className="text-gray-900 text-sm font-semibold">
-            {positions}/{maxPositions} positions
+            {paidCount}/{maxPositions} paid
           </span>
         </div>
         <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
           <div
-            className={`h-full rounded-full transition-all ${
-              isComplete
-                ? 'bg-green-500'
-                : isLocked
-                  ? 'bg-gray-200'
-                  : 'bg-gray-900'
-            }`}
+            className={`h-full rounded-full transition-all ${isLocked ? 'bg-gray-200' : 'bg-green-500'}`}
             style={{ width: `${pct}%` }}
           />
         </div>
@@ -137,7 +154,7 @@ function LevelCard({
         </div>
       </div>
 
-      {isActive && (
+      {isActive && !hasSubscribed && (
         <button
           onClick={handleUpgradeClick}
           className="w-full flex cursor-pointer items-center justify-center gap-2 bg-primary hover:bg-primary-light text-white py-2.5 rounded-xl text-sm font-semibold transition-colors"
@@ -146,12 +163,20 @@ function LevelCard({
           Upgrade — ${totalCost.toFixed(2)}
         </button>
       )}
+
+      {isActive && hasSubscribed && (
+        <div className="w-full flex items-center justify-center gap-2 bg-blue-50 text-blue-600 py-2.5 rounded-xl text-sm font-semibold border border-blue-100">
+          In Progress ({paidCount}/{maxPositions})
+        </div>
+      )}
+
       {isComplete && (
         <div className="w-full flex items-center justify-center gap-2 bg-green-50 text-green-600 py-2.5 rounded-xl text-sm font-semibold border border-green-100">
           <CheckCircle2 className="w-4 h-4" />
           Completed
         </div>
       )}
+
       {isLocked && (
         <button
           disabled
@@ -180,15 +205,16 @@ function EarningsPage() {
     fetchBalanceStat,
     fetchMainBalance,
   } = useBalanceStore()
-  const { userData, fetchUser } = useUserStore()
+  const { fetchUser } = useUserStore()
+  const { matrixData, fetchMatrix } = useMatrixStore()
 
   const selectedLevel = levelConfig.find((l) => l.level === upgradeLevel)
-  const currentLevel = userData?.currentLevel ?? 1
 
   useEffect(() => {
     fetchBalanceStat()
     fetchMainBalance()
     fetchUser()
+    fetchMatrix()
   }, [])
 
   const handleInsufficientBalance = (required: number, available: number) => {
@@ -200,6 +226,7 @@ function EarningsPage() {
     fetchUser()
     fetchMainBalance()
     fetchBalanceStat()
+    fetchMatrix()
   }
 
   const earningsStats = [
@@ -250,9 +277,6 @@ function EarningsPage() {
           <h2 className="text-gray-900 font-semibold text-base">
             Level Progress
           </h2>
-          <span className="text-xs text-gray-400 bg-gray-50 border border-[#E8E8E8] px-3 py-1 rounded-full">
-            Current: Level {currentLevel}
-          </span>
         </div>
 
         <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 mb-4 text-xs text-blue-700 leading-relaxed">
@@ -266,7 +290,7 @@ function EarningsPage() {
             <LevelCard
               key={lvl.level}
               {...lvl}
-              currentLevel={currentLevel}
+              matrix={matrixData}
               mainBalance={mainBalance}
               onUpgradeClick={setUpgradeLevel}
               onInsufficientBalance={handleInsufficientBalance}

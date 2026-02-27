@@ -3,7 +3,7 @@ import { UserName } from '@/assets/svgs'
 import { navItems } from '@/constants'
 import { useAuthStore } from '@/stores/auth.stores'
 import { Link } from '@tanstack/react-router'
-import { Bell, Menu, X, LogOut, User } from 'lucide-react'
+import { Menu, X, LogOut, User } from 'lucide-react'
 import { useState } from 'react'
 
 export default function Header() {
@@ -140,19 +140,19 @@ export default function Header() {
                   </div>
                 </div>
 
-                <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors relative">
+                {/* <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors relative">
                   <Bell className="w-5 h-5 text-gray-600" />
                   <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
-                </button>
+                </button> */}
               </div>
 
               {/* Mobile Right — bell only */}
-              <div className="flex lg:hidden items-center">
+              {/* <div className="flex lg:hidden items-center">
                 <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors relative">
                   <Bell className="w-5 h-5 text-gray-600" />
                   <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
                 </button>
-              </div>
+              </div> */}
             </>
           )}
         </div>

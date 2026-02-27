@@ -1,37 +1,27 @@
 import { MatrixSidebar } from '@/components/matrix/MatrixSidebar'
 import { MatrixStatsBar } from '@/components/matrix/MatrixStats'
 import { MatrixTree } from '@/components/matrix/MatrixTree'
-import { countByLevel, MatrixNode, padMatrix } from '@/lib/MatrixType'
-import { matrixService } from '@/services/Matrix.service'
+import { countByLevel } from '@/lib/MatrixType'
+import { useMatrixStore } from '@/stores/matrix.store'
 import { useUserStore } from '@/stores/user.store'
 import { createFileRoute } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 export const Route = createFileRoute('/matrix')({
   component: MatrixPage,
 })
 
 function MatrixPage() {
-  const [matrixData, setMatrixData] = useState<MatrixNode | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
+  const {
+    matrixData,
+    isLoading: loading,
+    error,
+    fetchMatrix,
+  } = useMatrixStore()
   const { userData, fetchUser } = useUserStore()
 
   useEffect(() => {
     fetchUser()
-    const fetchMatrix = async () => {
-      setLoading(true)
-      try {
-        const response = await matrixService.getMatrix()
-        console.log('response', response)
-        if (response.success) setMatrixData(padMatrix(response.data))
-      } catch (err: any) {
-        setError(err.response?.data?.message || 'Failed to load matrix.')
-      } finally {
-        setLoading(false)
-      }
-    }
     fetchMatrix()
   }, [])
 
