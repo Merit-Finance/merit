@@ -69,7 +69,7 @@ function RootComponent() {
       >
         <Outlet />
       </main>
-      {isAppRoute && <Footer />}
+      {/* {isAppRoute && <Footer />} */}
       {import.meta.env.DEV && <TanStackRouterDevtools />}
     </div>
   )
