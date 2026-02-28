@@ -30,18 +30,18 @@ function getDepthNodes(node: MatrixNode, depth: number): MatrixNode[] {
 }
 
 /**
- * Status is determined purely by whether the user has purchased the level,
- * not by how many referral slots are filled.
- * - 'complete'  → user has upgraded PAST this level (currentLevel > level)
- * - 'active'    → user is currently on this level OR it's the next available one
- * - 'locked'    → user hasn't reached the previous level yet
+ * A level is:
+ * - 'complete'  → user has already purchased a higher level
+ * - 'active'    → user is on this level AND the previous level's slots are fully paid
+ * - 'locked'    → previous level is not yet complete (0/n or partially filled)
  */
 function getLevelStatus(
   level: number,
   currentLevel: number,
+  prevLevelComplete: boolean,
 ): 'complete' | 'active' | 'locked' {
   if (currentLevel > level) return 'complete'
-  if (currentLevel >= level - 1) return 'active'
+  if (currentLevel >= level - 1 && prevLevelComplete) return 'active'
   return 'locked'
 }
 
@@ -57,6 +57,7 @@ function LevelCard({
   matrix,
   mainBalance,
   currentLevel,
+  prevLevelComplete,
   onUpgradeClick,
   onInsufficientBalance,
 }: {
@@ -67,10 +68,11 @@ function LevelCard({
   matrix: MatrixNode | null
   mainBalance: number | null
   currentLevel: number
+  prevLevelComplete: boolean
   onUpgradeClick: (level: number) => void
   onInsufficientBalance: (required: number, available: number) => void
 }) {
-  const status = getLevelStatus(level, currentLevel)
+  const status = getLevelStatus(level, currentLevel, prevLevelComplete)
   const isComplete = status === 'complete'
   const isLocked = status === 'locked'
   const isActive = status === 'active'
@@ -300,17 +302,31 @@ function EarningsPage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-          {levelConfig.map((lvl) => (
-            <LevelCard
-              key={lvl.level}
-              {...lvl}
-              matrix={matrixData}
-              mainBalance={mainBalance}
-              currentLevel={currentLevel}
-              onUpgradeClick={setUpgradeLevel}
-              onInsufficientBalance={handleInsufficientBalance}
-            />
-          ))}
+          {levelConfig.map((lvl, i) => {
+            // Determine if the previous level has all its slots filled
+            const prevLvl = levelConfig[i - 1]
+            const prevNodes =
+              prevLvl && matrixData
+                ? getDepthNodes(matrixData, prevLvl.level + 1)
+                : []
+            const prevPaidCount = prevNodes.filter((n) => n.hasPaid).length
+            // Level 1 has no previous level, so it's always "unlocked" from a prev-level perspective
+            const prevLevelComplete =
+              i === 0 || prevPaidCount >= prevLvl.maxPositions
+
+            return (
+              <LevelCard
+                key={lvl.level}
+                {...lvl}
+                matrix={matrixData}
+                mainBalance={mainBalance}
+                currentLevel={currentLevel}
+                prevLevelComplete={prevLevelComplete}
+                onUpgradeClick={setUpgradeLevel}
+                onInsufficientBalance={handleInsufficientBalance}
+              />
+            )
+          })}
         </div>
       </div>
 
