@@ -234,21 +234,27 @@ function EarningsPage() {
     fetchMatrix()
   }
 
+  function formatAmount(value: number): string {
+    if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(1)}M`
+    if (value >= 1_000) return `$${(value / 1_000).toFixed(1)}K`
+    return `$${value.toFixed(2)}`
+  }
+
   const earningsStats = [
     {
       id: 1,
       label: 'Overall Balance',
-      amount: `$${(balanceStat?.overallBalance ?? 0).toFixed(2)}`,
+      amount: formatAmount(balanceStat?.overallBalance ?? 0),
     },
     {
       id: 2,
       label: 'Total Earned',
-      amount: `$${(balanceStat?.totalEarn ?? 0).toFixed(2)}`,
+      amount: formatAmount(balanceStat?.totalEarn ?? 0),
     },
     {
       id: 3,
       label: 'Referral Earnings',
-      amount: `$${(balanceStat?.referralEarnings ?? 0).toFixed(2)}`,
+      amount: formatAmount(balanceStat?.referralEarnings ?? 0),
     },
   ]
 
@@ -269,7 +275,7 @@ function EarningsPage() {
             {isLoading ? (
               <div className="h-10 w-28 bg-gray-100 rounded-lg animate-pulse mb-4" />
             ) : (
-              <h2 className="text-gray-900 text-4xl font-semibold mb-4">
+              <h2 className="text-gray-900 text-4xl font-semibold mb-4 truncate">
                 {stat.amount}
               </h2>
             )}
