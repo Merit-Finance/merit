@@ -34,14 +34,24 @@ export function MatrixNodeCard({ node, isRoot = false }: MatrixNodeCardProps) {
             ${
               isRoot
                 ? 'w-16 h-16 bg-[#149AEE] border-[#149AEE] shadow-lg shadow-blue-200'
-                : !isEmpty
-                  ? 'w-14 h-14 bg-white border-green-400 shadow-md shadow-green-100'
-                  : 'w-14 h-14 bg-gray-50 border-dashed border-gray-300'
+                : isEmpty
+                  ? 'w-14 h-14 bg-gray-50 border-dashed border-gray-300'
+                  : node.hasPaid
+                    ? 'w-14 h-14 bg-white border-green-400 shadow-md shadow-green-100'
+                    : 'w-14 h-14 bg-white border-orange-400 shadow-md shadow-orange-100'
             }
           `}
         >
           <svg
-            className={`w-5 h-5 ${isRoot ? 'text-white' : !isEmpty ? 'text-green-500' : 'text-gray-300'}`}
+            className={`w-5 h-5 ${
+              isRoot
+                ? 'text-white'
+                : isEmpty
+                  ? 'text-gray-300'
+                  : node.hasPaid
+                    ? 'text-green-500'
+                    : 'text-orange-400'
+            }`}
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
