@@ -23,32 +23,28 @@ const levelConfig = [
   { level: 3, maxPositions: 8, cost: 80, earnings: '$640.00' },
   { level: 4, maxPositions: 16, cost: 300, earnings: '$4800.00' },
 ]
+
 function getDepthNodes(node: MatrixNode, depth: number): MatrixNode[] {
   if (node.depth === depth) return [node]
   return node.children.flatMap((c) => getDepthNodes(c, depth))
 }
+
+/**
+ * Status is determined purely by whether the user has purchased the level,
+ * not by how many referral slots are filled.
+ * - 'complete'  → user has upgraded PAST this level (currentLevel > level)
+ * - 'active'    → user is currently on this level OR it's the next available one
+ * - 'locked'    → user hasn't reached the previous level yet
+ */
 function getLevelStatus(
   level: number,
-  matrix: MatrixNode | null,
+  currentLevel: number,
 ): 'complete' | 'active' | 'locked' {
-  if (!matrix) return level === 1 ? 'active' : 'locked'
-
-  const nodes = getDepthNodes(matrix, level + 1)
-  const paidCount = nodes.filter((n) => n.hasPaid).length
-  const maxPositions =
-    levelConfig.find((l) => l.level === level)?.maxPositions ?? 2
-
-  if (level === 1) {
-    if (paidCount >= maxPositions) return 'complete'
-    return 'active'
-  }
-
-  const prevComplete = getLevelStatus(level - 1, matrix) === 'complete'
-  if (!prevComplete) return 'locked'
-
-  if (paidCount >= maxPositions) return 'complete'
-  return 'active'
+  if (currentLevel > level) return 'complete'
+  if (currentLevel >= level - 1) return 'active'
+  return 'locked'
 }
+
 function getLockedBy(level: number) {
   return `Complete Level ${level - 1} First`
 }
@@ -74,7 +70,7 @@ function LevelCard({
   onUpgradeClick: (level: number) => void
   onInsufficientBalance: (required: number, available: number) => void
 }) {
-  const status = getLevelStatus(level, matrix)
+  const status = getLevelStatus(level, currentLevel)
   const isComplete = status === 'complete'
   const isLocked = status === 'locked'
   const isActive = status === 'active'
@@ -86,6 +82,7 @@ function LevelCard({
   const paidCount = nodes.filter((n) => n.hasPaid).length
   const pct = (paidCount / maxPositions) * 100
 
+  // User has purchased this level if currentLevel >= level
   const hasSubscribed = currentLevel >= level
 
   const handleUpgradeClick = () => {
@@ -157,6 +154,7 @@ function LevelCard({
         </div>
       </div>
 
+      {/* Not yet purchased → show Upgrade button */}
       {isActive && !hasSubscribed && (
         <button
           onClick={handleUpgradeClick}
@@ -167,13 +165,16 @@ function LevelCard({
         </button>
       )}
 
-      {isActive && hasSubscribed && (
+      {/* Purchased, slots still filling → In Progress */}
+      {isActive && hasSubscribed && paidCount < maxPositions && (
         <div className="w-full flex items-center justify-center gap-2 bg-blue-50 text-blue-600 py-2.5 rounded-xl text-sm font-semibold border border-blue-100">
           In Progress ({paidCount}/{maxPositions})
         </div>
       )}
 
-      {isComplete && (
+      {/* Purchased and all slots filled → Completed (even if not yet upgraded to next level) */}
+      {((isActive && hasSubscribed && paidCount >= maxPositions) ||
+        isComplete) && (
         <div className="w-full flex items-center justify-center gap-2 bg-green-50 text-green-600 py-2.5 rounded-xl text-sm font-semibold border border-green-100">
           <CheckCircle2 className="w-4 h-4" />
           Completed
