@@ -1,7 +1,7 @@
 export interface MatrixNode {
   id: string | null
   name: string | null
-  depth: number 
+  depth: number
   tier: number
   position: number | null
   completed: boolean
@@ -11,10 +11,22 @@ export interface MatrixNode {
   children: MatrixNode[]
 }
 
+export interface MatrixParent {
+  id: string
+  name: string
+  level: number
+  tier: number
+  position: number
+}
+
+export interface MatrixRootNode extends MatrixNode {
+  myParent: MatrixParent | null
+}
+
 export interface MatrixResponse {
   success: boolean
   message: string
-  data: MatrixNode
+  data: MatrixRootNode
   statusCode: number
 }
 

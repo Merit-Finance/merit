@@ -38,7 +38,7 @@ export function MatrixTree({
   uplineUsername,
 }: MatrixTreeProps) {
   return (
-    <div className="bg-white rounded-2xl border border-[#E8E8E8] p-4 sm:p-6">
+    <div className="bg-white rounded-2xl border border-[#E8E8E8] p-4 sm:p-6 min-w-0 overflow-hidden">
       <div className="mb-6">
         <p className="text-sm font-semibold text-gray-900">
           Complete Matrix Tree
@@ -61,10 +61,10 @@ export function MatrixTree({
           <p className="text-red-400 text-sm">{error}</p>
         </div>
       ) : matrixData ? (
-        <div className="w-full overflow-x-auto pb-4">
+        <div className="overflow-x-auto overflow-y-visible pb-4">
           <div
             className="flex flex-col items-center"
-            style={{ minWidth: 'max-content' }}
+            style={{ minWidth: '1600px' }}
           >
             {uplineUsername && (
               <>

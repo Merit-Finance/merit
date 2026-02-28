@@ -3,7 +3,6 @@ import { MatrixStatsBar } from '@/components/matrix/MatrixStats'
 import { MatrixTree } from '@/components/matrix/MatrixTree'
 import { countByLevel } from '@/lib/MatrixType'
 import { useMatrixStore } from '@/stores/matrix.store'
-import { useUserStore } from '@/stores/user.store'
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect } from 'react'
 
@@ -14,14 +13,13 @@ export const Route = createFileRoute('/matrix')({
 function MatrixPage() {
   const {
     matrixData,
+    myParent,
     isLoading: loading,
     error,
     fetchMatrix,
   } = useMatrixStore()
-  const { userData, fetchUser } = useUserStore()
 
   useEffect(() => {
-    fetchUser()
     fetchMatrix()
   }, [])
 
@@ -41,7 +39,7 @@ function MatrixPage() {
           matrixData={matrixData}
           loading={loading}
           error={error}
-          uplineUsername={userData?.referredByName ?? null}
+          uplineUsername={myParent?.name ?? null}
         />
         <MatrixSidebar levelCounts={levelCounts} />
       </div>

@@ -35,7 +35,8 @@ function ChildrenGroup({ nodes, level, parentKey }: MatrixLevelProps) {
           return (
             <div
               key={key}
-              className="flex flex-col items-center flex-1 min-w-0"
+              className="flex flex-col items-center flex-1"
+              style={{ minWidth: '100px' }}
             >
               <MatrixNodeCard node={node} />
               {node.children && node.children.length > 0 && (

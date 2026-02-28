@@ -56,13 +56,14 @@ export function MatrixNodeCard({ node, isRoot = false }: MatrixNodeCardProps) {
         </div>
       </div>
       <span
-        className={`mt-1.5 text-xs font-medium truncate max-w-[72px] text-center ${
+        className={`mt-1.5 text-xs font-medium text-center truncate ${
           isRoot
             ? 'text-[#149AEE]'
             : !isEmpty
               ? 'text-gray-700'
               : 'text-gray-400'
         }`}
+        style={{ width: '88px' }}
       >
         {isRoot ? 'You' : node.name || 'Empty'}
       </span>
