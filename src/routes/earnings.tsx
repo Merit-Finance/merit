@@ -29,12 +29,6 @@ function getDepthNodes(node: MatrixNode, depth: number): MatrixNode[] {
   return node.children.flatMap((c) => getDepthNodes(c, depth))
 }
 
-/**
- * A level is:
- * - 'complete'  → user has already purchased a higher level
- * - 'active'    → user is on this level AND the previous level's slots are fully paid
- * - 'locked'    → previous level is not yet complete (0/n or partially filled)
- */
 function getLevelStatus(
   level: number,
   currentLevel: number,
@@ -84,7 +78,6 @@ function LevelCard({
   const paidCount = nodes.filter((n) => n.hasPaid).length
   const pct = (paidCount / maxPositions) * 100
 
-  // User has purchased this level if currentLevel >= level
   const hasSubscribed = currentLevel >= level
 
   const handleUpgradeClick = () => {
@@ -98,7 +91,7 @@ function LevelCard({
 
   return (
     <div
-      className={`bg-white rounded-2xl p-5 border border-[#E8E8E8] flex flex-col gap-4 ${isLocked ? 'opacity-75' : ''}`}
+      className={`bg-white rounded-2xl p-4 border border-[#E8E8E8] flex flex-col gap-3 ${isLocked ? 'opacity-75' : ''}`}
     >
       <div className="flex items-center justify-between">
         <h3 className="font-semibold text-gray-900 text-base">Level {level}</h3>
@@ -156,7 +149,6 @@ function LevelCard({
         </div>
       </div>
 
-      {/* Not yet purchased → show Upgrade button */}
       {isActive && !hasSubscribed && (
         <button
           onClick={handleUpgradeClick}
@@ -167,14 +159,12 @@ function LevelCard({
         </button>
       )}
 
-      {/* Purchased, slots still filling → In Progress */}
       {isActive && hasSubscribed && paidCount < maxPositions && (
         <div className="w-full flex items-center justify-center gap-2 bg-blue-50 text-blue-600 py-2.5 rounded-xl text-sm font-semibold border border-blue-100">
           In Progress ({paidCount}/{maxPositions})
         </div>
       )}
 
-      {/* Purchased and all slots filled → Completed (even if not yet upgraded to next level) */}
       {((isActive && hasSubscribed && paidCount >= maxPositions) ||
         isComplete) && (
         <div className="w-full flex items-center justify-center gap-2 bg-green-50 text-green-600 py-2.5 rounded-xl text-sm font-semibold border border-green-100">
@@ -267,17 +257,19 @@ function EarningsPage() {
         <p className="text-gray-500 text-sm mt-1">Track your earnings</p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 min-[400px]:grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
         {earningsStats.map((stat) => (
           <div
             key={stat.id}
-            className="bg-white rounded-2xl p-6 border border-[#E8E8E8]"
+            className="bg-white rounded-2xl p-4 md:p-6 border border-[#E8E8E8]"
           >
-            <p className="text-gray-500 text-sm mb-2">{stat.label}</p>
+            <p className="text-gray-500 text-sm mb-2 leading-tight">
+              {stat.label}
+            </p>
             {isLoading ? (
-              <div className="h-10 w-28 bg-gray-100 rounded-lg animate-pulse mb-4" />
+              <div className="h-8 w-24 bg-gray-100 rounded-lg animate-pulse mb-2 md:mb-4" />
             ) : (
-              <h2 className="text-gray-900 text-4xl font-semibold mb-4 truncate">
+              <h2 className="text-gray-900 text-xl md:text-2xl font-semibold mb-2 md:mb-4 truncate">
                 {stat.amount}
               </h2>
             )}
@@ -285,7 +277,7 @@ function EarningsPage() {
         ))}
       </div>
 
-      <div className="bg-white rounded-2xl p-6 border border-[#E8E8E8]">
+      <div className="bg-white rounded-2xl p-4 md:p-6 border border-[#E8E8E8]">
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-gray-900 font-semibold text-base">
             Level Progress
@@ -303,14 +295,12 @@ function EarningsPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
           {levelConfig.map((lvl, i) => {
-            // Determine if the previous level has all its slots filled
             const prevLvl = levelConfig[i - 1]
             const prevNodes =
               prevLvl && matrixData
                 ? getDepthNodes(matrixData, prevLvl.level + 1)
                 : []
             const prevPaidCount = prevNodes.filter((n) => n.hasPaid).length
-            // Level 1 has no previous level, so it's always "unlocked" from a prev-level perspective
             const prevLevelComplete =
               i === 0 || prevPaidCount >= prevLvl.maxPositions
 
