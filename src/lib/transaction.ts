@@ -10,6 +10,8 @@ export type TransactionSource =
   | 'LEVEL_UPGRADE'
   | 'REFERRAL_BONUS'
   | 'WITHDRAWAL'
+  | 'UPGRADE'
+  | 'TRANSFER'
 
 export interface Transaction {
   id: string
@@ -17,7 +19,8 @@ export interface Transaction {
   amount: string
   direction: TransactionDirection
   source: TransactionSource
-  network: string
+  network: string | null
+  level: number | null
   referenceId: string
   createdAt: string
   status: TransactionStatus

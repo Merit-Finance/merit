@@ -75,8 +75,11 @@ function DashboardPage() {
     })
   }
 
-  const formatSource = (source: string) => {
-    return source
+  const formatSource = (tx: Transaction) => {
+    if (tx.source === 'UPGRADE' && tx.level != null) {
+      return `LV${tx.level} Upgrade`
+    }
+    return tx.source
       .replace(/_/g, ' ')
       .toLowerCase()
       .replace(/\b\w/g, (c) => c.toUpperCase())
@@ -237,7 +240,7 @@ function DashboardPage() {
                     </div>
                     <div className="min-w-0">
                       <p className="text-gray-900 font-medium text-sm truncate">
-                        {formatSource(tx.source)}
+                        {formatSource(tx)}
                       </p>
                       <p className="text-gray-400 text-xs">
                         {new Date(tx.createdAt).toLocaleDateString('en-US', {
