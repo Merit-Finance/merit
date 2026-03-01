@@ -114,7 +114,7 @@ function DashboardPage() {
               onClick={() => setWithdrawOpen(true)}
               className="flex flex-col items-center gap-2 cursor-pointer group"
             >
-              <div className="w-14 h-14 bg-white/20 hover:bg-white/30 rounded-2xl flex items-center justify-center transition-all border-2 border-white group-active:scale-95">
+              <div className="w-14 h-14 bg-white/20 hover:bg-white/30 rounded-2xl flex items-center justify-center transition-all border border-white group-active:scale-95">
                 <Receive className="w-6 h-6 text-white" />
               </div>
               <span className="text-white/90 text-xs font-medium">
@@ -136,7 +136,7 @@ function DashboardPage() {
               onClick={() => navigate({ to: '/Transfer' })}
               className="flex flex-col items-center gap-2 cursor-pointer group"
             >
-              <div className="w-14 h-14 bg-white/20 hover:bg-white/30 rounded-2xl flex items-center justify-center transition-all border-2 border-white group-active:scale-95">
+              <div className="w-14 h-14 bg-white/20 hover:bg-white/30 rounded-2xl flex items-center justify-center transition-all border border-white group-active:scale-95">
                 <Transfer />
               </div>
               <span className="text-white/90 text-xs font-medium">
