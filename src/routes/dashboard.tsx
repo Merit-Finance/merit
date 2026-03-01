@@ -1,4 +1,4 @@
-import { Copy, Receive } from '@/assets'
+import { Copy, Cup, Receive } from '@/assets'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useBalanceStore } from '@/stores/balance.store'
 import { useUserStore } from '@/stores/user.store'
@@ -91,38 +91,57 @@ function DashboardPage() {
 
   return (
     <div className="max-w-4xl mx-auto w-full space-y-4 sm:space-y-6">
-      <section className="bg-gradient-to-br from-[#149AEE] to-[#0B7FD4] rounded-2xl py-6 px-5 sm:py-8 sm:px-10 shadow-lg">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 sm:gap-6">
+      <section className="bg-gradient-to-br from-[#149AEE] to-[#0B7FD4] rounded-2xl py-8 px-5 shadow-lg">
+        <div className="flex flex-col items-center text-center gap-6">
           <div>
-            <p className="text-white/90 text-sm mb-2">Current Balance</p>
+            <p className="text-white/80 text-sm mb-2">Current Balance</p>
             {isLoading ? (
-              <div className="h-10 w-36 bg-white/20 rounded-lg animate-pulse" />
+              <div className="h-12 w-40 bg-white/20 rounded-lg animate-pulse mx-auto" />
             ) : error ? (
               <>
-                <h1 className="text-white text-4xl sm:text-6xl font-semibold">
-                  --
-                </h1>
+                <h1 className="text-white text-5xl font-semibold">--</h1>
                 <p className="text-white/70 text-xs mt-1">{error}</p>
               </>
             ) : (
-              <h1 className="text-white text-4xl sm:text-6xl font-semibold">
+              <h1 className="text-white text-5xl sm:text-6xl font-semibold">
                 ${formatBalance(mainBalance)}
               </h1>
             )}
           </div>
 
-          <div className="flex flex-row sm:flex-col gap-2 sm:gap-3 sm:w-auto">
+          <div className="flex items-center justify-center gap-8 sm:gap-12">
             <button
               onClick={() => setWithdrawOpen(true)}
-              className="flex-1 sm:flex-none sm:w-auto cursor-pointer bg-white/20 hover:bg-white/30 text-white px-4 sm:px-6 py-2.5 rounded-full border border-white font-medium transition-all flex items-center justify-center gap-2 text-sm backdrop-blur-sm"
+              className="flex flex-col items-center gap-2 cursor-pointer group"
             >
-              Withdraw <Receive />
+              <div className="w-14 h-14 bg-white/20 hover:bg-white/30 rounded-2xl flex items-center justify-center transition-all border-2 border-white group-active:scale-95">
+                <Receive className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-white/90 text-xs font-medium">
+                Withdraw
+              </span>
             </button>
+
+            <button
+              onClick={() => navigate({ to: '/earnings' })}
+              className="flex flex-col items-center gap-2 cursor-pointer group"
+            >
+              <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center transition-all shadow-md group-hover:bg-white/90 group-active:scale-95">
+                <Cup className="w-7 h-7 text-[#149AEE]" />
+              </div>
+              <span className="text-white/90 text-xs font-medium">Upgrade</span>
+            </button>
+
             <button
               onClick={() => navigate({ to: '/Transfer' })}
-              className="flex-1 sm:flex-none sm:w-auto cursor-pointer bg-white/20 hover:bg-white/30 text-white px-4 sm:px-6 py-2.5 rounded-full border border-white font-medium transition-all flex items-center justify-center gap-2 text-sm backdrop-blur-sm"
+              className="flex flex-col items-center gap-2 cursor-pointer group"
             >
-              Transfer <Transfer />
+              <div className="w-14 h-14 bg-white/20 hover:bg-white/30 rounded-2xl flex items-center justify-center transition-all border-2 border-white group-active:scale-95">
+                <Transfer />
+              </div>
+              <span className="text-white/90 text-xs font-medium">
+                Transfer
+              </span>
             </button>
           </div>
         </div>
