@@ -142,7 +142,6 @@ function ReferralsPage() {
         </div>
       </section>
 
-      {/* Referral link */}
       <div className="bg-white rounded-2xl p-4 sm:p-6 border border-[#E8E8E8]">
         <h2 className="text-gray-900 font-semibold text-base mb-4">
           Your Referral Link
