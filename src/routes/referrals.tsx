@@ -40,8 +40,8 @@ function ReferralsPage() {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'What if your network actually paid you to grow?',
-          text: 'You\'re already building connections every day…\nWhy not earn while doing it?\n\n"Merit Finance is made for you."\n\nRegister here:',
+          title: 'Merit Finance — Build Your Network. Earn as You Grow.',
+          text: "If you're looking for a platform where you can build your network and earn as you grow, check out Merit Finance. Simple structure. Clear levels. Real progression.\n\nSign up here:",
           url: referralLink,
         })
       } catch (err) {
