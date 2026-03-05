@@ -21,7 +21,9 @@ interface RecipientUser {
 
 function TransferPage() {
   const navigate = useNavigate()
-  const { mainBalance, fetchMainBalance } = useBalanceStore()
+  const { mainBalance, upgradeReserve, fetchMainBalance } = useBalanceStore()
+
+  const availableBalance = (mainBalance ?? 0) - (upgradeReserve ?? 0)
 
   const [searchQuery, setSearchQuery] = useState('')
   const [isSearching, setIsSearching] = useState(false)
@@ -90,7 +92,7 @@ function TransferPage() {
       setAmountError('Enter a valid amount')
       return
     }
-    if (mainBalance !== null && numeric > mainBalance) {
+    if (numeric > availableBalance) {
       setAmountError('Insufficient balance')
     }
   }
@@ -102,7 +104,7 @@ function TransferPage() {
       setAmountError('Enter a valid amount')
       return
     }
-    if (mainBalance !== null && numeric > mainBalance) {
+    if (numeric > availableBalance) {
       setAmountError('Insufficient balance')
       return
     }
@@ -154,8 +156,7 @@ function TransferPage() {
   const isAmountValid =
     !isNaN(numericAmount) &&
     numericAmount > 0 &&
-    mainBalance !== null &&
-    numericAmount <= mainBalance
+    numericAmount <= availableBalance
 
   const walletAddress = recipient?.wallet?.[0]?.address ?? null
   const shortWallet = walletAddress
@@ -210,13 +211,12 @@ function TransferPage() {
         <h1 className="text-xl font-bold text-gray-900">Transfer</h1>
         <span className="text-xs text-gray-400 bg-gray-50 border border-[#E8E8E8] px-3 py-1 rounded-full">
           Available: $
-          {(mainBalance ?? 0).toLocaleString('en-US', {
+          {availableBalance.toLocaleString('en-US', {
             minimumFractionDigits: 2,
           })}
         </span>
       </div>
 
-      {/* Recipient Card */}
       <div className="bg-white rounded-2xl p-5 border border-[#E8E8E8] space-y-3">
         <label className="text-sm font-semibold text-gray-700">Recipient</label>
 
@@ -272,7 +272,6 @@ function TransferPage() {
         )}
       </div>
 
-      {/* Amount Card */}
       {recipient && (
         <div className="bg-white rounded-2xl p-5 border border-[#E8E8E8] space-y-3">
           <label className="text-sm font-semibold text-gray-700">Amount</label>
@@ -296,7 +295,7 @@ function TransferPage() {
             <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-100 rounded-xl">
               <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
               <p className="text-red-600 text-xs">
-                Insufficient balance. You have ${(mainBalance ?? 0).toFixed(2)}{' '}
+                Insufficient balance. You have ${availableBalance.toFixed(2)}{' '}
                 available.
               </p>
             </div>
@@ -309,7 +308,7 @@ function TransferPage() {
               <button
                 key={preset}
                 onClick={() => handleAmountChange(String(preset))}
-                disabled={mainBalance !== null && preset > mainBalance}
+                disabled={preset > availableBalance}
                 className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#E8E8E8] text-gray-600 hover:border-primary hover:text-primary transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 ${preset}
@@ -319,7 +318,6 @@ function TransferPage() {
         </div>
       )}
 
-      {/* Warning */}
       {recipient && (
         <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-100 rounded-xl">
           <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />

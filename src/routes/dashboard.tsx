@@ -23,7 +23,8 @@ export const Route = createFileRoute('/dashboard')({
 const TX_LIMIT = 10
 
 function DashboardPage() {
-  const { mainBalance, isLoading, error, fetchMainBalance } = useBalanceStore()
+  const { mainBalance, upgradeReserve, isLoading, error, fetchMainBalance } =
+    useBalanceStore()
   const { userData, fetchUser } = useUserStore()
   const [withdrawOpen, setWithdrawOpen] = useState(false)
   const [transactions, setTransactions] = useState<Transaction[]>([])
@@ -32,6 +33,8 @@ function DashboardPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const [copied, setCopied] = useState(false)
   const navigate = useNavigate()
+
+  const availableBalance = (mainBalance ?? 0) - (upgradeReserve ?? 0)
 
   useEffect(() => {
     fetchMainBalance()
@@ -335,7 +338,7 @@ function DashboardPage() {
       <WithdrawDialog
         open={withdrawOpen}
         onOpenChange={setWithdrawOpen}
-        availableBalance={mainBalance ?? 0}
+        availableBalance={availableBalance}
       />
     </div>
   )

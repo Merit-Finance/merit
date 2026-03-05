@@ -2,6 +2,7 @@ export interface BalanceData {
   id: string
   amount: string
   type: 'MAIN' | 'REFERRAL'
+  upgradeReserve: string
   updatedAt: string
 }
 

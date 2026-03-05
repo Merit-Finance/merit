@@ -57,7 +57,7 @@ export function WithdrawDialog({
     setError(null)
     try {
       await transactionService.withdraw({
-        amount: amount,
+        amount: parseFloat(amount),
         network,
         address: walletAddress.trim(),
       })

@@ -4,6 +4,7 @@ import { BalanceStat } from '@/lib/balance'
 
 interface BalanceState {
   mainBalance: number | null
+  upgradeReserve: number | null
   referralBalance: number | null
   balanceStat: BalanceStat | null
   isLoading: boolean
@@ -18,6 +19,7 @@ interface BalanceState {
 
 export const useBalanceStore = create<BalanceState>((set) => ({
   mainBalance: null,
+  upgradeReserve: null,
   referralBalance: null,
   balanceStat: null,
   isLoading: false,
@@ -28,7 +30,11 @@ export const useBalanceStore = create<BalanceState>((set) => ({
     try {
       const response = await balanceService.getMainBalance()
       if (response.success && response.data) {
-        set({ mainBalance: parseFloat(response.data.amount), isLoading: false })
+        set({
+          mainBalance: parseFloat(response.data.amount),
+          upgradeReserve: parseFloat(response.data.upgradeReserve ?? '0'),
+          isLoading: false,
+        })
       }
     } catch (error: any) {
       set({
@@ -70,6 +76,9 @@ export const useBalanceStore = create<BalanceState>((set) => ({
       set({
         mainBalance: mainResponse.success
           ? parseFloat(mainResponse.data.amount)
+          : null,
+        upgradeReserve: mainResponse.success
+          ? parseFloat(mainResponse.data.upgradeReserve ?? '0')
           : null,
         referralBalance: referralResponse.success
           ? parseFloat(referralResponse.data.amount)

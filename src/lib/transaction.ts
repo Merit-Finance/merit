@@ -51,7 +51,7 @@ export interface TransactionListResponse {
 }
 
 export interface WithdrawPayload {
-  amount: string
+  amount: number
   network: Network
   address: string
 }
