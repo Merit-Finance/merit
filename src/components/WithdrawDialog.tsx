@@ -19,7 +19,7 @@ export function WithdrawDialog({
   open,
   onOpenChange,
   availableBalance = 0,
-  minWithdrawal = 10,
+  minWithdrawal = 7,
   onSuccess,
 }: WithdrawDialogProps) {
   const { userData } = useUserStore()
