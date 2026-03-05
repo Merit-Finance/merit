@@ -270,7 +270,10 @@ function ReferralsPage() {
                   <span className="bg-blue-50 text-blue-600 text-xs font-medium px-2.5 py-1 rounded-full border border-blue-100">
                     Tier {ref.tier}
                   </span>
-                  {ref.level >= 1 ? (
+                  <span className="bg-purple-50 text-purple-600 text-xs font-medium px-2.5 py-1 rounded-full border border-purple-100">
+                    Level {ref.level ?? 0}
+                  </span>
+                  {parseInt(ref.level ?? '0', 10) >= 1 ? (
                     <span className="bg-green-50 text-green-600 text-xs font-medium px-2.5 py-1 rounded-full border border-green-100">
                       Active
                     </span>
