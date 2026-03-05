@@ -118,7 +118,7 @@ function ReferralsPage() {
         })}
       </div>
 
-      {/* Transfer earnings: stacks on mobile, original row layout on sm+ */}
+      {/* Transfer earnings */}
       <section
         onClick={() => setTransferToMainOpen(true)}
         className="bg-white border border-[#E8E8E8] rounded-2xl px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 cursor-pointer hover:border-primary/40 hover:bg-blue-50/40 transition-all group"
@@ -136,7 +136,6 @@ function ReferralsPage() {
             </p>
           </div>
         </div>
-        {/* Full-width on mobile, auto-width on sm+ (original) */}
         <div className="w-full sm:w-auto shrink-0 bg-primary group-hover:bg-primary-light text-white text-xs font-semibold px-4 py-2 rounded-xl transition-colors text-center whitespace-nowrap">
           Transfer Now
         </div>
@@ -252,7 +251,7 @@ function ReferralsPage() {
             {referralList.map((ref) => (
               <div
                 key={ref.id}
-                className="flex items-center justify-between p-3 sm:p-4 border border-[#E8E8E8] rounded-xl gap-2"
+                className="flex items-start justify-between p-3 sm:p-4 border border-[#E8E8E8] rounded-xl gap-2"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="w-9 h-9 rounded-full flex items-center justify-center bg-green-50 shrink-0">
@@ -267,9 +266,20 @@ function ReferralsPage() {
                     </p>
                   </div>
                 </div>
-                <span className="bg-blue-50 text-blue-600 text-xs font-medium px-2.5 py-1 rounded-full border border-blue-100 shrink-0">
-                  Tier {ref.tier}
-                </span>
+                <div className="flex flex-col items-end gap-1 shrink-0">
+                  <span className="bg-blue-50 text-blue-600 text-xs font-medium px-2.5 py-1 rounded-full border border-blue-100">
+                    Tier {ref.tier}
+                  </span>
+                  {ref.level >= 1 ? (
+                    <span className="bg-green-50 text-green-600 text-xs font-medium px-2.5 py-1 rounded-full border border-green-100">
+                      Active
+                    </span>
+                  ) : (
+                    <span className="bg-gray-100 text-gray-400 text-xs font-medium px-2.5 py-1 rounded-full border border-gray-200">
+                      Not Active
+                    </span>
+                  )}
+                </div>
               </div>
             ))}
           </div>
