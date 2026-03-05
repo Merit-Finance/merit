@@ -36,7 +36,8 @@ export function WithdrawDialog({
   const numAmount = parseFloat(amount) || 0
   const hasZeroBalance = availableBalance <= 0
   const belowMin = numAmount > 0 && numAmount < minWithdrawal
-  const exceedsBalance = numAmount > availableBalance
+  const exceedsBalance =
+    parseFloat(numAmount.toFixed(2)) > parseFloat(availableBalance.toFixed(2))
   const hasNoWallets = savedWallets.length === 0
   const canConfirm =
     !hasZeroBalance &&
