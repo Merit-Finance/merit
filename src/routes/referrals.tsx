@@ -41,7 +41,7 @@ function ReferralsPage() {
       try {
         await navigator.share({
           title: 'Merit Finance — Build Your Network. Earn as You Grow.',
-          text: "If you're looking for a platform where you can build your network and earn as you grow, check out Merit Finance. Simple structure. Clear levels. Real progression.\n\nSign up here:",
+          text: 'Merit Finance is a structured referral and task reward platform built around level progression',
           url: referralLink,
         })
       } catch (err) {
