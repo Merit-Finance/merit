@@ -13,12 +13,12 @@ export const Route = createFileRoute('/earnings')({
 })
 
 function getPlatformFee(level: number, cost: number): number {
-  if (level === 1) return 5
+  if (level === 1) return 3
   return cost * 0.1
 }
 
 const levelConfig = [
-  { level: 1, maxPositions: 2, cost: 18, earnings: '$40.00' },
+  { level: 1, maxPositions: 2, cost: 20, earnings: '$40.00' },
   { level: 2, maxPositions: 4, cost: 30, earnings: '$120.00' },
   { level: 3, maxPositions: 8, cost: 80, earnings: '$640.00' },
   { level: 4, maxPositions: 16, cost: 300, earnings: '$4800.00' },
