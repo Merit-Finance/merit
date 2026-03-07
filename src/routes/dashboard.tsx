@@ -264,6 +264,22 @@ function DashboardPage() {
                       <p className="text-gray-900 font-medium text-sm truncate">
                         {formatSource(tx)}
                       </p>
+                      {tx.sender && (
+                        <p className="text-gray-400 text-xs truncate">
+                          From:{' '}
+                          <span className="text-gray-600 font-medium">
+                            {tx.sender}
+                          </span>
+                        </p>
+                      )}
+                      {tx.receiver && (
+                        <p className="text-gray-400 text-xs truncate">
+                          To:{' '}
+                          <span className="text-gray-600 font-medium">
+                            {tx.receiver}
+                          </span>
+                        </p>
+                      )}
                       <p className="text-gray-400 text-xs">
                         {new Date(tx.createdAt).toLocaleDateString('en-US', {
                           month: 'short',

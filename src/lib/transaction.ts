@@ -22,10 +22,11 @@ export interface Transaction {
   network: string | null
   level: number | null
   referenceId: string
+  sender: string | null
+  receiver: string | null
   createdAt: string
   status: TransactionStatus
 }
-
 export interface TransactionMeta {
   total: number
   page: number

@@ -289,7 +289,7 @@ function EarningsPage() {
 
         <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 mb-4 text-xs text-blue-700 leading-relaxed">
           <span className="font-semibold">Platform Fee:</span> Level 1 includes
-          a fixed $5.00 fee. Levels 2–4 include a 10% platform fee on top of the
+          a fixed $3.00 fee. Levels 2–4 include a 10% platform fee on top of the
           level cost.
         </div>
 

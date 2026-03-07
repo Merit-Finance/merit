@@ -11,7 +11,7 @@ const TRUST_AVATARS = [
 ]
 
 const STATS = [
-  { label: 'Starting with just $25' },
+  { label: 'Starting with just $23' },
   { label: '$5k+ balance at level 4' },
   { label: 'Withdraw anytime' },
   { label: '24/7 support' },
