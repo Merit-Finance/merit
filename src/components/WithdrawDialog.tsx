@@ -15,11 +15,13 @@ interface WithdrawDialogProps {
   onSuccess?: () => void
 }
 
+const MIN_WITHDRAWAL = import.meta.env.DEV ? 1 : 7
+
 export function WithdrawDialog({
   open,
   onOpenChange,
   availableBalance = 0,
-  minWithdrawal = 7,
+  minWithdrawal = MIN_WITHDRAWAL,
   onSuccess,
 }: WithdrawDialogProps) {
   const { userData } = useUserStore()
