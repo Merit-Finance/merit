@@ -13,6 +13,11 @@ export type TransactionSource =
   | 'UPGRADE'
   | 'TRANSFER'
 
+export interface TransactionUser {
+  name: string
+  userName: string
+  id: string
+}
 export interface Transaction {
   id: string
   balanceId: string
@@ -22,8 +27,8 @@ export interface Transaction {
   network: string | null
   level: number | null
   referenceId: string
-  sender: string | null
-  receiver: string | null
+  sender: TransactionUser | null 
+  receiver: TransactionUser | null 
   createdAt: string
   status: TransactionStatus
 }
@@ -35,7 +40,6 @@ export interface TransactionMeta {
   hasNextPage: boolean
   hasPreviousPage: boolean
 }
-
 export interface TransactionListApiResponse {
   success: boolean
   message: string

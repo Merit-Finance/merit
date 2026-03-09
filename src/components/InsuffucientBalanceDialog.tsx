@@ -57,8 +57,8 @@ export function InsufficientBalanceDialog({
     setError(null)
     try {
       const response = await apiClient.post(
-        '/transaction/deposit',
-        { amount: parseFloat(amount), network },
+        '/custody/deposit-address',
+        { network, asset: 'USDT', amount: parseFloat(amount) },
         { validateStatus: (status) => status < 500 },
       )
 

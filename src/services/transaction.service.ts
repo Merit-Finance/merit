@@ -37,8 +37,8 @@ export const transactionService = {
 
   withdraw: async (payload: WithdrawPayload): Promise<WithdrawResponse> => {
     const response = await apiClient.post<WithdrawResponse>(
-      '/transaction/withdraw',
-      payload,
+      '/custody/withdraw',
+      { ...payload, asset: 'USDT' },
     )
     return response.data
   },

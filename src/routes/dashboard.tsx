@@ -264,19 +264,19 @@ function DashboardPage() {
                       <p className="text-gray-900 font-medium text-sm truncate">
                         {formatSource(tx)}
                       </p>
-                      {tx.sender && (
-                        <p className="text-gray-400 text-xs truncate">
-                          From:{' '}
-                          <span className="text-gray-600 font-medium">
-                            {tx.sender}
-                          </span>
-                        </p>
-                      )}
                       {tx.receiver && (
                         <p className="text-gray-400 text-xs truncate">
                           To:{' '}
                           <span className="text-gray-600 font-medium">
-                            {tx.receiver}
+                            {tx.receiver.name}
+                          </span>
+                        </p>
+                      )}
+                      {tx.sender && (
+                        <p className="text-gray-400 text-xs truncate">
+                          From:{' '}
+                          <span className="text-gray-600 font-medium">
+                            {tx.sender.name}
                           </span>
                         </p>
                       )}
