@@ -15,7 +15,7 @@ interface WithdrawDialogProps {
   onSuccess?: () => void
 }
 
-const MIN_DEPOSIT = 1
+const MIN_WITHDRAWAL = 1
 
 export function WithdrawDialog({
   open,
