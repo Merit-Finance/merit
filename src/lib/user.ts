@@ -54,7 +54,7 @@ export interface UpdateInfoResponse {
 
 export interface UpdateWalletPayload {
   wallet: string
-  network: 'BSC' | 'TON'
+  network: 'BSC' | 'TRON'
   pin: string
 }
 
