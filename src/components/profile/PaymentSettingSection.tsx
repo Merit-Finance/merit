@@ -5,8 +5,8 @@ import { userService } from '@/services/users.service'
 import { useUserStore } from '@/stores/user.store'
 import { PinModal } from '@/components/PinModal'
 
-type Network = 'BSC' | 'TON' | 'TRON'
-const NETWORKS: Network[] = ['BSC', 'TON', 'TRON']
+type Network = 'BSC' | 'TON'
+const NETWORKS: Network[] = ['BSC', 'TON']
 
 export function PaymentSettingsSection() {
   const { userData, fetchUser } = useUserStore()

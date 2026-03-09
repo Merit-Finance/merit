@@ -1,6 +1,6 @@
 export interface Wallet {
   wallet: string
-  network: 'BSC' | 'TON' | 'TRON'
+  network: 'BSC' | 'TON'
 }
 
 export interface UserData {
@@ -54,7 +54,7 @@ export interface UpdateInfoResponse {
 
 export interface UpdateWalletPayload {
   wallet: string
-  network: 'BSC' | 'TON' | 'TRON'
+  network: 'BSC' | 'TON'
   pin: string
 }
 

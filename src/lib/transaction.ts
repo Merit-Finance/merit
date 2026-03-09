@@ -1,5 +1,5 @@
 export type TransactionDirection = 'CREDIT' | 'DEBIT'
-export type Network = 'BSC' | 'TON' | 'TRON'
+export type Network = 'BSC' | 'TON'
 export type TransactionStatus =
   | 'PENDING'
   | 'COMPLETED'
@@ -27,8 +27,8 @@ export interface Transaction {
   network: string | null
   level: number | null
   referenceId: string
-  sender: TransactionUser | null 
-  receiver: TransactionUser | null 
+  sender: TransactionUser | null
+  receiver: TransactionUser | null
   createdAt: string
   status: TransactionStatus
 }
