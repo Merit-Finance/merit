@@ -28,8 +28,7 @@ interface Props {
   available: number
 }
 
-const MIN_DEPOSIT = import.meta.env.DEV ? 1 : 10
-
+const MIN_DEPOSIT = 1
 export function InsufficientBalanceDialog({
   open,
   onOpenChange,

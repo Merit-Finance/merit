@@ -15,7 +15,7 @@ interface WithdrawDialogProps {
   onSuccess?: () => void
 }
 
-const MIN_WITHDRAWAL = import.meta.env.DEV ? 1 : 7
+const MIN_DEPOSIT = 1
 
 export function WithdrawDialog({
   open,
