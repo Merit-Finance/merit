@@ -9,9 +9,9 @@ interface Props {
   payment: PaymentData
 }
 
-function useCountdown(validUntil: string) {
+function useCountdown(expiresAt: string) {
   const getSecondsLeft = () => {
-    const diff = new Date(validUntil).getTime() - Date.now()
+    const diff = new Date(expiresAt).getTime() - Date.now()
     return Math.max(0, Math.floor(diff / 1000))
   }
 
@@ -23,7 +23,7 @@ function useCountdown(validUntil: string) {
       setSecondsLeft(getSecondsLeft())
     }, 1000)
     return () => clearInterval(interval)
-  }, [validUntil])
+  }, [expiresAt])
 
   const minutes = Math.floor(secondsLeft / 60)
   const seconds = secondsLeft % 60
@@ -37,17 +37,17 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
   const [copiedAddress, setCopiedAddress] = useState(false)
   const [copiedAmount, setCopiedAmount] = useState(false)
   const { minutes, seconds, isExpired, isUrgent } = useCountdown(
-    payment.valid_until,
+    payment.expiresAt,
   )
 
   const copyAddress = () => {
-    navigator.clipboard.writeText(payment.pay_address)
+    navigator.clipboard.writeText(payment.address)
     setCopiedAddress(true)
     setTimeout(() => setCopiedAddress(false), 2000)
   }
 
   const copyAmount = () => {
-    navigator.clipboard.writeText(payment.pay_amount.toString())
+    navigator.clipboard.writeText(payment.totalPayable.toString())
     setCopiedAmount(true)
     setTimeout(() => setCopiedAmount(false), 2000)
   }
@@ -55,8 +55,8 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
   const pad = (n: number) => String(n).padStart(2, '0')
 
   const totalSeconds = Math.floor(
-    (new Date(payment.valid_until).getTime() -
-      new Date(payment.created_at).getTime()) /
+    (new Date(payment.expiresAt).getTime() -
+      new Date(payment.createdAt).getTime()) /
       1000,
   )
   const progress = Math.min((seconds + minutes * 60) / totalSeconds, 1)
@@ -68,7 +68,6 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/60 z-50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
         <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md bg-white rounded-2xl shadow-2xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 overflow-hidden">
-          {/* Header */}
           <div className="bg-gray-900 px-6 pt-6 pb-8 relative">
             <Dialog.Close className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors">
               <X className="w-4 h-4" />
@@ -81,11 +80,9 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
               Send the exact amount to the address below
             </Dialog.Description>
 
-            {/* Countdown */}
             <div className="flex items-center justify-center mt-5">
               <div className="relative w-20 h-20">
                 <svg className="w-20 h-20 -rotate-90" viewBox="0 0 64 64">
-                  {/* Background circle */}
                   <circle
                     cx="32"
                     cy="32"
@@ -94,7 +91,6 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
                     stroke="rgba(255,255,255,0.1)"
                     strokeWidth="4"
                   />
-                  {/* Progress circle */}
                   <circle
                     cx="32"
                     cy="32"
@@ -136,9 +132,7 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
             )}
           </div>
 
-          {/* Body */}
           <div className="px-6 py-5 space-y-4 -mt-3">
-            {/* Amount to send */}
             <div className="bg-gray-50 border border-[#E8E8E8] rounded-xl p-4">
               <p className="text-xs text-gray-400 mb-2 flex items-center gap-1">
                 <Clock className="w-3 h-3" />
@@ -147,10 +141,10 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-900 font-bold text-xl leading-none">
-                    {payment.pay_amount.toFixed(6)}
+                    {payment.totalPayable.toFixed(2)}
                   </p>
                   <p className="text-blue-500 text-xs font-semibold uppercase mt-0.5">
-                    {payment.pay_currency}
+                    {payment.asset}
                   </p>
                 </div>
                 <button
@@ -173,18 +167,18 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
                 </button>
               </div>
               <p className="text-gray-400 text-xs mt-2 border-t border-gray-200 pt-2">
-                ≈ ${payment.price_amount.toFixed(2)} USD
+                ≈ ${payment.requestedAmount.toFixed(2)} USD · Fee: $
+                {payment.networkFee.toFixed(2)}
               </p>
             </div>
 
-            {/* Payment Address */}
             <div>
               <p className="text-xs font-medium text-gray-700 mb-1.5">
                 Payment Address
               </p>
               <div className="bg-gray-50 border border-[#E8E8E8] rounded-xl p-3 flex items-center gap-3">
                 <p className="text-xs text-gray-700 font-mono truncate flex-1 select-all">
-                  {payment.pay_address}
+                  {payment.address}
                 </p>
                 <button
                   onClick={copyAddress}
@@ -207,7 +201,6 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
               </div>
             </div>
 
-            {/* Details row */}
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-gray-50 border border-[#E8E8E8] rounded-xl p-3">
                 <p className="text-xs text-gray-400 mb-1">Network</p>
@@ -216,22 +209,19 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
                 </p>
               </div>
               <div className="bg-gray-50 border border-[#E8E8E8] rounded-xl p-3">
-                <p className="text-xs text-gray-400 mb-1">Payment ID</p>
+                <p className="text-xs text-gray-400 mb-1">Reference ID</p>
                 <p className="text-gray-900 font-bold text-sm font-mono truncate">
-                  {payment.payment_id}
+                  {payment.referenceId}
                 </p>
               </div>
             </div>
 
-            {/* Warning */}
             <div className="bg-amber-50 border border-amber-100 rounded-xl p-3 flex items-start gap-2">
               <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
               <p className="text-amber-700 text-xs leading-relaxed">
                 Send only{' '}
-                <span className="font-bold uppercase">
-                  {payment.pay_currency}
-                </span>{' '}
-                on the{' '}
+                <span className="font-bold uppercase">{payment.asset}</span> on
+                the{' '}
                 <span className="font-bold uppercase">{payment.network}</span>{' '}
                 network. Sending any other asset may result in permanent loss of
                 funds.

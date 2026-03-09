@@ -9,15 +9,16 @@ type Network = 'TRON' | 'BSC' | 'TON'
 type View = 'warning' | 'deposit'
 
 export interface PaymentData {
-  payment_id: string
-  payment_status: string
-  pay_address: string
-  price_amount: number
-  created_at: string
-  pay_amount: number
-  pay_currency: string
+  referenceId: string
+  userId: string
   network: string
-  valid_until: string
+  asset: string
+  address: string
+  requestedAmount: number
+  networkFee: number
+  totalPayable: number
+  expiresAt: string
+  createdAt: string
 }
 
 interface Props {
@@ -26,6 +27,8 @@ interface Props {
   required: number
   available: number
 }
+
+const MIN_DEPOSIT = import.meta.env.DEV ? 1 : 10
 
 export function InsufficientBalanceDialog({
   open,
@@ -180,12 +183,12 @@ export function InsufficientBalanceDialog({
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     placeholder="0.00"
-                    min="0"
+                    min={MIN_DEPOSIT}
                   />
                   <p className="text-xs text-gray-400 mt-1">
-                    Minimum needed:{' '}
+                    Minimum deposit:{' '}
                     <span className="font-medium text-gray-600">
-                      ${shortfall.toFixed(2)}
+                      ${MIN_DEPOSIT}
                     </span>
                   </p>
                 </div>
@@ -211,9 +214,17 @@ export function InsufficientBalanceDialog({
                   </div>
                 </div>
 
+                {error && (
+                  <p className="text-xs text-red-500 bg-red-50 border border-red-100 rounded-lg px-3 py-2 mb-4">
+                    {error}
+                  </p>
+                )}
+
                 <button
                   onClick={handleDeposit}
-                  disabled={isLoading || !amount || parseFloat(amount) <= 0}
+                  disabled={
+                    isLoading || !amount || parseFloat(amount) < MIN_DEPOSIT
+                  }
                   className="w-full bg-primary hover:bg-primary-light disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-3 rounded-xl font-semibold text-sm transition-colors flex items-center justify-center gap-2"
                 >
                   {isLoading ? (
