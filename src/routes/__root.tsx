@@ -8,6 +8,7 @@ import type { QueryClient } from '@tanstack/react-query'
 import { useAuthStore } from '@/stores/auth.stores'
 import { useEffect } from 'react'
 import { useNavigate } from '@tanstack/react-router'
+import { useInactivityLogout } from '@/lib/useInactivityLog'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -40,6 +41,13 @@ function RootComponent() {
   const isPublicRoute = PUBLIC_ROUTES.includes(pathname)
   const isTokenRoute = TOKEN_ROUTES.includes(pathname)
   const isAppRoute = !isAuthRoute && !isPublicRoute && !isTokenRoute
+
+  useInactivityLogout({
+    timeoutMs: 15 * 60 * 1000, // 15 minutes of inactivity
+    onWarning: (secondsLeft) => {
+      console.warn(`Inactivity warning: logging out in ${secondsLeft}s`)
+    },
+  })
 
   useEffect(() => {
     // Not logged in and trying to access app routes → send to login

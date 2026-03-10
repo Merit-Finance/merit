@@ -16,21 +16,31 @@ apiClient.interceptors.request.use(
     }
     return config
   },
-  (error) => {
-    return Promise.reject(error)
-  },
+  (error) => Promise.reject(error),
 )
 
-// Response interceptor for handling errors
+let isHandlingUnauth = false
+
+export function clearAuthAndRedirect() {
+  if (isHandlingUnauth) return
+  isHandlingUnauth = true
+
+  localStorage.removeItem('auth_token')
+  localStorage.removeItem('refresh_token')
+  localStorage.removeItem('auth-storage')
+
+  setTimeout(() => {
+    isHandlingUnauth = false
+    window.location.href = '/login'
+  }, 100)
+}
+
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
       const isOnLoginPage = window.location.pathname === '/login'
-      if (!isOnLoginPage) {
-        localStorage.removeItem('auth_token')
-        window.location.href = '/login'
-      }
+      if (!isOnLoginPage) clearAuthAndRedirect()
     }
     return Promise.reject(error)
   },
