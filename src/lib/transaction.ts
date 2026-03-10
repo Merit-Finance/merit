@@ -22,6 +22,7 @@ export interface Transaction {
   id: string
   balanceId: string
   amount: string
+  userId: string
   direction: TransactionDirection
   source: TransactionSource
   network: string | null

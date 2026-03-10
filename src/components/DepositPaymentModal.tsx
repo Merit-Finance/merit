@@ -16,13 +16,23 @@ interface Props {
   open: boolean
   onOpenChange: (open: boolean) => void
   payment: PaymentData
+  /**
+   * When true the modal opens directly on the "confirming" step (tx-hash input).
+   * Used when the user re-opens the modal from Transaction History where the
+   * deposit address is no longer available.
+   */
+  startAtConfirm?: boolean
 }
 
 type ConfirmView = 'idle' | 'confirming' | 'success'
 
 const STORAGE_KEY = 'deposit_payment_state'
 
-function savePaymentState(payment: PaymentData, confirmView: ConfirmView, txHash: string) {
+function savePaymentState(
+  payment: PaymentData,
+  confirmView: ConfirmView,
+  txHash: string,
+) {
   try {
     sessionStorage.setItem(
       STORAGE_KEY,
@@ -40,7 +50,6 @@ function loadPaymentState(): {
     const raw = sessionStorage.getItem(STORAGE_KEY)
     if (!raw) return null
     const parsed = JSON.parse(raw)
-    // Discard if already expired
     if (new Date(parsed.payment.expiresAt).getTime() < Date.now()) {
       sessionStorage.removeItem(STORAGE_KEY)
       return null
@@ -86,21 +95,31 @@ const EXPLORER_URLS: Record<string, string> = {
   TRON: 'https://tronscan.org/#/transaction/',
 }
 
-export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
+export function DepositPaymentModal({
+  open,
+  onOpenChange,
+  payment,
+  startAtConfirm = false,
+}: Props) {
   const [copiedAddress, setCopiedAddress] = useState(false)
   const [copiedAmount, setCopiedAmount] = useState(false)
-  const [confirmView, setConfirmView] = useState<ConfirmView>('idle')
+  const [confirmView, setConfirmView] = useState<ConfirmView>(
+    startAtConfirm ? 'confirming' : 'idle',
+  )
   const [txHash, setTxHash] = useState('')
   const [showTxHelp, setShowTxHelp] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [confirmError, setConfirmError] = useState<string | null>(null)
   const [wasRestored, setWasRestored] = useState(false)
 
+  useEffect(() => {
+    if (startAtConfirm) setConfirmView('confirming')
+  }, [startAtConfirm])
+
   const { minutes, seconds, isExpired, isUrgent } = useCountdown(
     payment.expiresAt,
   )
 
-  // On mount: restore state if user came back after switching to wallet app
   useEffect(() => {
     const saved = loadPaymentState()
     if (saved && saved.payment.referenceId === payment.referenceId) {
@@ -111,14 +130,12 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
     }
   }, [])
 
-  // Persist state whenever it changes so a refresh doesn't lose progress
   useEffect(() => {
     if (open && !isExpired && confirmView !== 'success') {
       savePaymentState(payment, confirmView, txHash)
     }
   }, [open, confirmView, txHash, isExpired])
 
-  // Save immediately when user leaves (switches to wallet app)
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (
@@ -131,7 +148,8 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
       }
     }
     document.addEventListener('visibilitychange', handleVisibilityChange)
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+    return () =>
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
   }, [open, confirmView, txHash, isExpired, payment])
 
   const copyAddress = () => {
@@ -188,13 +206,15 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
 
   const handleClose = () => {
     clearPaymentState()
-    setConfirmView('idle')
+    setConfirmView(startAtConfirm ? 'confirming' : 'idle')
     setTxHash('')
     setConfirmError(null)
     setShowTxHelp(false)
     setWasRestored(false)
     onOpenChange(false)
   }
+
+  const hasAddress = Boolean(payment.address)
 
   return (
     <Dialog.Root
@@ -234,10 +254,14 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
                 </Dialog.Close>
 
                 <Dialog.Title className="text-white font-bold text-base mb-0.5">
-                  Complete Your Payment
+                  {startAtConfirm
+                    ? 'Confirm Your Payment'
+                    : 'Complete Your Payment'}
                 </Dialog.Title>
                 <Dialog.Description className="text-white/50 text-xs">
-                  Send the exact amount to the address below
+                  {startAtConfirm
+                    ? 'Submit your transaction hash to confirm this pending deposit'
+                    : 'Send the exact amount to the address below'}
                 </Dialog.Description>
 
                 {wasRestored && (
@@ -305,72 +329,99 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
               </div>
 
               <div className="px-6 py-5 space-y-4 -mt-3 overflow-y-auto">
-                <div className="bg-gray-50 border border-[#E8E8E8] rounded-xl p-4">
-                  <p className="text-xs text-gray-400 mb-2 flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    Send exactly this amount
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-gray-900 font-bold text-xl leading-none">
-                        {payment.totalPayable}
+                {!startAtConfirm && (
+                  <>
+                    <div className="bg-gray-50 border border-[#E8E8E8] rounded-xl p-4">
+                      <p className="text-xs text-gray-400 mb-2 flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        Send exactly this amount
                       </p>
-                      <p className="text-blue-500 text-xs font-semibold uppercase mt-0.5">
-                        {payment.asset}
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-gray-900 font-bold text-xl leading-none">
+                            {payment.totalPayable}
+                          </p>
+                          <p className="text-blue-500 text-xs font-semibold uppercase mt-0.5">
+                            {payment.asset}
+                          </p>
+                        </div>
+                        <button
+                          onClick={copyAmount}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                            copiedAmount
+                              ? 'bg-green-50 text-green-600 border border-green-100'
+                              : 'bg-white border border-[#E8E8E8] text-gray-600 hover:bg-gray-100'
+                          }`}
+                        >
+                          {copiedAmount ? (
+                            <>
+                              <CheckCircle2 className="w-3.5 h-3.5" /> Copied
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-3.5 h-3.5" /> Copy
+                            </>
+                          )}
+                        </button>
+                      </div>
+                      <p className="text-gray-400 text-xs mt-2 border-t border-gray-200 pt-2">
+                        ≈ ${payment.requestedAmount} USD · Fee: $
+                        {payment.networkFee}
                       </p>
                     </div>
-                    <button
-                      onClick={copyAmount}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                        copiedAmount
-                          ? 'bg-green-50 text-green-600 border border-green-100'
-                          : 'bg-white border border-[#E8E8E8] text-gray-600 hover:bg-gray-100'
-                      }`}
-                    >
-                      {copiedAmount ? (
-                        <>
-                          <CheckCircle2 className="w-3.5 h-3.5" /> Copied
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-3.5 h-3.5" /> Copy
-                        </>
-                      )}
-                    </button>
-                  </div>
-                  <p className="text-gray-400 text-xs mt-2 border-t border-gray-200 pt-2">
-                    ≈ ${payment.requestedAmount} USD · Fee: ${payment.networkFee}
-                  </p>
-                </div>
 
-                <div>
-                  <p className="text-xs font-medium text-gray-700 mb-1.5">
-                    Payment Address
-                  </p>
-                  <div className="bg-gray-50 border border-[#E8E8E8] rounded-xl p-3 flex items-center gap-3">
-                    <p className="text-xs text-gray-700 font-mono truncate flex-1 select-all">
-                      {payment.address}
-                    </p>
-                    <button
-                      onClick={copyAddress}
-                      className={`shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                        copiedAddress
-                          ? 'bg-green-50 text-green-600 border border-green-100'
-                          : 'bg-white border border-[#E8E8E8] text-gray-600 hover:bg-gray-100'
-                      }`}
-                    >
-                      {copiedAddress ? (
-                        <>
-                          <CheckCircle2 className="w-3.5 h-3.5" /> Copied
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-3.5 h-3.5" /> Copy
-                        </>
-                      )}
-                    </button>
+                    {hasAddress && (
+                      <div>
+                        <p className="text-xs font-medium text-gray-700 mb-1.5">
+                          Payment Address
+                        </p>
+                        <div className="bg-gray-50 border border-[#E8E8E8] rounded-xl p-3 flex items-center gap-3">
+                          <p className="text-xs text-gray-700 font-mono truncate flex-1 select-all">
+                            {payment.address}
+                          </p>
+                          <button
+                            onClick={copyAddress}
+                            className={`shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                              copiedAddress
+                                ? 'bg-green-50 text-green-600 border border-green-100'
+                                : 'bg-white border border-[#E8E8E8] text-gray-600 hover:bg-gray-100'
+                            }`}
+                          >
+                            {copiedAddress ? (
+                              <>
+                                <CheckCircle2 className="w-3.5 h-3.5" /> Copied
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-3.5 h-3.5" /> Copy
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+
+                {startAtConfirm && (
+                  <div className="bg-gray-50 border border-[#E8E8E8] rounded-xl p-4 flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-gray-400 mb-1">Amount</p>
+                      <p className="text-gray-900 font-bold text-lg leading-none">
+                        {payment.totalPayable}{' '}
+                        <span className="text-blue-500 text-xs font-semibold uppercase">
+                          {payment.asset}
+                        </span>
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-gray-400 mb-1">Reference</p>
+                      <p className="text-gray-700 font-mono text-xs truncate max-w-[140px]">
+                        {payment.referenceId}
+                      </p>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-gray-50 border border-[#E8E8E8] rounded-xl p-3">
@@ -387,19 +438,23 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
                   </div>
                 </div>
 
-                <div className="bg-amber-50 border border-amber-100 rounded-xl p-3 flex items-start gap-2">
-                  <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                  <p className="text-amber-700 text-xs leading-relaxed">
-                    Send only{' '}
-                    <span className="font-bold uppercase">{payment.asset}</span>{' '}
-                    on the{' '}
-                    <span className="font-bold uppercase">
-                      {payment.network}
-                    </span>{' '}
-                    network. Sending any other asset may result in permanent
-                    loss of funds.
-                  </p>
-                </div>
+                {!startAtConfirm && (
+                  <div className="bg-amber-50 border border-amber-100 rounded-xl p-3 flex items-start gap-2">
+                    <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                    <p className="text-amber-700 text-xs leading-relaxed">
+                      Send only{' '}
+                      <span className="font-bold uppercase">
+                        {payment.asset}
+                      </span>{' '}
+                      on the{' '}
+                      <span className="font-bold uppercase">
+                        {payment.network}
+                      </span>{' '}
+                      network. Sending any other asset may result in permanent
+                      loss of funds.
+                    </p>
+                  </div>
+                )}
 
                 {confirmView === 'idle' && (
                   <div className="space-y-3">
@@ -505,17 +560,20 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
                     )}
 
                     <div className="flex gap-2">
-                      <button
-                        onClick={() => {
-                          setConfirmView('idle')
-                          setTxHash('')
-                          setConfirmError(null)
-                          setShowTxHelp(false)
-                        }}
-                        className="flex-1 border border-[#E8E8E8] text-gray-600 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-colors"
-                      >
-                        Back
-                      </button>
+                      {/* Only show Back button in the full deposit flow */}
+                      {!startAtConfirm && (
+                        <button
+                          onClick={() => {
+                            setConfirmView('idle')
+                            setTxHash('')
+                            setConfirmError(null)
+                            setShowTxHelp(false)
+                          }}
+                          className="flex-1 border border-[#E8E8E8] text-gray-600 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-colors"
+                        >
+                          Back
+                        </button>
+                      )}
                       <button
                         disabled={txHash.trim().length < 20 || isSubmitting}
                         onClick={handleConfirm}

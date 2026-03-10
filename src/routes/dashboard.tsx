@@ -11,16 +11,53 @@ import {
   ChevronLeft,
   ChevronRight,
   Check,
+  Clock,
 } from 'lucide-react'
 import { transactionService } from '@/services/transaction.service'
 import { Transaction, TransactionMeta } from '@/lib/transaction'
 import { Transfer } from '@/assets/svgs'
+import { DepositPaymentModal } from '@/components/DepositPaymentModal'
+import { PaymentData } from '@/components/InsuffucientBalanceDialog'
 
 export const Route = createFileRoute('/dashboard')({
   component: DashboardPage,
 })
 
 const TX_LIMIT = 10
+const PENDING_CONFIRM_WINDOW_MS = 30 * 60 * 1000 // 30 minutes
+
+function isPendingAndConfirmable(tx: Transaction): boolean {
+  if (tx.status !== 'PENDING') return false
+  if (tx.source !== 'DIRECT_DEPOSIT') return false
+  const age = Date.now() - new Date(tx.createdAt).getTime()
+  return age < PENDING_CONFIRM_WINDOW_MS
+}
+
+/**
+ * Reconstruct a minimal PaymentData from a pending DIRECT_DEPOSIT transaction
+ * so we can pass it into DepositPaymentModal. Fields not stored on the tx
+ * (address, asset, fees) are either pulled from the referenceId or set to
+ * sensible defaults — the modal only needs them to pre-fill the hash input and
+ * call transactionService.confirmDeposit, which uses referenceId + network.
+ */
+function buildPaymentDataFromTx(tx: Transaction): PaymentData {
+  const expiresAt = new Date(
+    new Date(tx.createdAt).getTime() + PENDING_CONFIRM_WINDOW_MS,
+  ).toISOString()
+
+  return {
+    referenceId: tx.referenceId ?? tx.id,
+    userId: tx.userId ?? '',
+    network: tx.network ?? 'BSC',
+    asset: 'USDT',
+    address: '',
+    requestedAmount: parseFloat(tx.amount),
+    networkFee: 0,
+    totalPayable: parseFloat(tx.amount),
+    expiresAt,
+    createdAt: tx.createdAt,
+  }
+}
 
 function DashboardPage() {
   const { mainBalance, upgradeReserve, isLoading, error, fetchMainBalance } =
@@ -33,6 +70,9 @@ function DashboardPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const [copied, setCopied] = useState(false)
   const navigate = useNavigate()
+
+  const [confirmPayment, setConfirmPayment] = useState<PaymentData | null>(null)
+  const [confirmPaymentOpen, setConfirmPaymentOpen] = useState(false)
 
   const availableBalance = (mainBalance ?? 0) - (upgradeReserve ?? 0)
 
@@ -68,6 +108,28 @@ function DashboardPage() {
     )
     setCopied(true)
     setTimeout(() => setCopied(false), 2500)
+  }
+
+  const handleConfirmFromHistory = (tx: Transaction) => {
+    const payment = buildPaymentDataFromTx(tx)
+    setConfirmPayment(payment)
+    setConfirmPaymentOpen(true)
+  }
+
+  const handleConfirmModalClose = (open: boolean) => {
+    setConfirmPaymentOpen(open)
+    if (!open) {
+      setCurrentPage((p) => p) 
+      transactionService
+        .getTransactions({ page: currentPage, limit: TX_LIMIT })
+        .then((res) => {
+          if (res.success) {
+            setTransactions(res.data)
+            setTxMeta(res.meta)
+          }
+        })
+        .catch(() => {})
+    }
   }
 
   const formatBalance = (balance: number | null) => {
@@ -243,85 +305,101 @@ function DashboardPage() {
         ) : (
           <>
             <div className="space-y-3">
-              {transactions.map((tx) => (
-                <div
-                  key={tx.id}
-                  className="flex items-center justify-between p-3 sm:p-4 border border-[#E8E8E8] rounded-xl gap-3"
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div
-                      className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
-                        tx.direction === 'CREDIT' ? 'bg-green-50' : 'bg-red-50'
-                      }`}
-                    >
-                      {tx.direction === 'CREDIT' ? (
-                        <DollarSign className="w-4 h-4 text-green-500" />
-                      ) : (
-                        <ArrowDownCircle className="w-4 h-4 text-red-400" />
-                      )}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-gray-900 font-medium text-sm truncate">
-                        {formatSource(tx)}
-                      </p>
-                      {tx.receiver && (
-                        <p className="text-gray-400 text-xs truncate">
-                          To:{' '}
-                          <span className="text-gray-600 font-medium">
-                            {tx.receiver.name}
-                          </span>
-                        </p>
-                      )}
-                      {tx.sender && (
-                        <p className="text-gray-400 text-xs truncate">
-                          From:{' '}
-                          <span className="text-gray-600 font-medium">
-                            {tx.sender.name}
-                          </span>
-                        </p>
-                      )}
-                      <p className="text-gray-400 text-xs">
-                        {new Date(tx.createdAt).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric',
-                        })}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-end gap-1 shrink-0">
-                    <span
-                      className={`text-sm font-semibold ${
-                        tx.direction === 'CREDIT'
-                          ? 'text-green-500'
-                          : 'text-red-500'
-                      }`}
-                    >
-                      {tx.direction === 'CREDIT' ? '+' : '-'}$
-                      {parseFloat(tx.amount).toFixed(2)}
-                    </span>
-                    <div className="flex items-center gap-1">
-                      {tx.network && (
-                        <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-blue-50 text-blue-500">
-                          {tx.network}
-                        </span>
-                      )}
-                      <span
-                        className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${
-                          tx.status === 'COMPLETED' ||
-                          tx.status === 'SUCCESSFUL'
-                            ? 'bg-green-100 text-green-600'
-                            : tx.status === 'PENDING'
-                              ? 'bg-yellow-100 text-yellow-700'
-                              : 'bg-red-100 text-red-600'
+              {transactions.map((tx) => {
+                const canConfirm = isPendingAndConfirmable(tx)
+                return (
+                  <div
+                    key={tx.id}
+                    className="flex items-center justify-between p-3 sm:p-4 border border-[#E8E8E8] rounded-xl gap-3"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div
+                        className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
+                          tx.direction === 'CREDIT'
+                            ? 'bg-green-50'
+                            : 'bg-red-50'
                         }`}
                       >
-                        {tx.status.toLowerCase()}
+                        {tx.direction === 'CREDIT' ? (
+                          <DollarSign className="w-4 h-4 text-green-500" />
+                        ) : (
+                          <ArrowDownCircle className="w-4 h-4 text-red-400" />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-gray-900 font-medium text-sm truncate">
+                          {formatSource(tx)}
+                        </p>
+                        {tx.receiver && (
+                          <p className="text-gray-400 text-xs truncate">
+                            To:{' '}
+                            <span className="text-gray-600 font-medium">
+                              {tx.receiver.name}
+                            </span>
+                          </p>
+                        )}
+                        {tx.sender && (
+                          <p className="text-gray-400 text-xs truncate">
+                            From:{' '}
+                            <span className="text-gray-600 font-medium">
+                              {tx.sender.name}
+                            </span>
+                          </p>
+                        )}
+                        <p className="text-gray-400 text-xs">
+                          {new Date(tx.createdAt).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                          })}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col items-end gap-1.5 shrink-0">
+                      <span
+                        className={`text-sm font-semibold ${
+                          tx.direction === 'CREDIT'
+                            ? 'text-green-500'
+                            : 'text-red-500'
+                        }`}
+                      >
+                        {tx.direction === 'CREDIT' ? '+' : '-'}$
+                        {parseFloat(tx.amount).toFixed(2)}
                       </span>
+                      <div className="flex items-center gap-1">
+                        {tx.network && (
+                          <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-blue-50 text-blue-500">
+                            {tx.network}
+                          </span>
+                        )}
+                        <span
+                          className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${
+                            tx.status === 'COMPLETED' ||
+                            tx.status === 'SUCCESSFUL'
+                              ? 'bg-green-100 text-green-600'
+                              : tx.status === 'PENDING'
+                                ? 'bg-yellow-100 text-yellow-700'
+                                : 'bg-red-100 text-red-600'
+                          }`}
+                        >
+                          {tx.status.toLowerCase()}
+                        </span>
+                      </div>
+
+                      {canConfirm && (
+                        <button
+                          onClick={() => handleConfirmFromHistory(tx)}
+                          className="flex items-center gap-1 mt-0.5 px-2.5 py-1 bg-primary hover:bg-primary-light text-white rounded-lg text-[11px] font-semibold transition-colors"
+                        >
+                          <Clock className="w-3 h-3" />
+                          Confirm Tx
+                        </button>
+                      )}
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
 
             {totalPages > 1 && (
@@ -356,6 +434,14 @@ function DashboardPage() {
         onOpenChange={setWithdrawOpen}
         availableBalance={availableBalance}
       />
+
+      {confirmPayment && (
+        <DepositPaymentModal
+          open={confirmPaymentOpen}
+          onOpenChange={handleConfirmModalClose}
+          payment={confirmPayment}
+        />
+      )}
     </div>
   )
 }
