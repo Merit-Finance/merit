@@ -65,7 +65,12 @@ export function InsufficientBalanceDialog({
       )
 
       if (response.data.success) {
-        setPaymentData(response.data.data)
+        const raw = response.data.data
+        setPaymentData({
+          ...raw,
+          networkFee: raw.networkFee ?? 0,
+          totalPayable: raw.totalPayable ?? raw.requestedAmount,
+        })
         setPaymentOpen(true)
         onOpenChange(false)
       } else {

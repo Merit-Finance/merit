@@ -18,6 +18,13 @@ export interface InternalTransferResponse {
   message: string
 }
 
+export interface ConfirmDepositPayload {
+  referenceId: string
+  txHash: string
+  network: string
+  asset: string
+}
+
 export const transactionService = {
   getTransactions: async (
     params: GetTransactionsParams = {},
@@ -84,6 +91,13 @@ export const transactionService = {
         },
       },
     )
+    return response.data
+  },
+
+  confirmDeposit: async (
+    payload: ConfirmDepositPayload,
+  ): Promise<{ success: boolean; message: string }> => {
+    const response = await apiClient.post('/custody/deposit-confirm', payload)
     return response.data
   },
 }
