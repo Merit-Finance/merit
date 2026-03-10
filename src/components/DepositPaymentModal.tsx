@@ -131,7 +131,6 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/60 z-50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
         <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[calc(100vw-2rem)] max-w-md bg-white rounded-2xl shadow-2xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 overflow-hidden flex flex-col max-h-[calc(100dvh-2rem)]">
-          {/* ── Success state ── */}
           {confirmView === 'success' ? (
             <div className="px-6 py-10 flex flex-col items-center text-center gap-3">
               <div className="w-16 h-16 rounded-full bg-green-50 flex items-center justify-center mb-1">
@@ -154,7 +153,6 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
             </div>
           ) : (
             <>
-              {/* ── Header with timer ── */}
               <div className="bg-gray-900 px-6 pt-6 pb-8 relative shrink-0">
                 <Dialog.Close className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors">
                   <X className="w-4 h-4" />
@@ -224,7 +222,6 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
               </div>
 
               <div className="px-6 py-5 space-y-4 -mt-3 overflow-y-auto">
-                {/* Amount */}
                 <div className="bg-gray-50 border border-[#E8E8E8] rounded-xl p-4">
                   <p className="text-xs text-gray-400 mb-2 flex items-center gap-1">
                     <Clock className="w-3 h-3" />
@@ -264,7 +261,6 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
                   </p>
                 </div>
 
-                {/* Address */}
                 <div>
                   <p className="text-xs font-medium text-gray-700 mb-1.5">
                     Payment Address
@@ -294,7 +290,6 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
                   </div>
                 </div>
 
-                {/* Network / Ref */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-gray-50 border border-[#E8E8E8] rounded-xl p-3">
                     <p className="text-xs text-gray-400 mb-1">Network</p>
@@ -310,7 +305,6 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
                   </div>
                 </div>
 
-                {/* Warning */}
                 <div className="bg-amber-50 border border-amber-100 rounded-xl p-3 flex items-start gap-2">
                   <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
                   <p className="text-amber-700 text-xs leading-relaxed">
@@ -325,14 +319,28 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
                   </p>
                 </div>
 
-                {/* ── Confirm section ── */}
                 {confirmView === 'idle' && (
-                  <button
-                    onClick={() => setConfirmView('confirming')}
-                    className="w-full flex cursor-pointer items-center justify-center gap-2 bg-primary hover:bg-primary-light text-white py-2.5 rounded-xl text-sm font-semibold transition-colors"
-                  >
-                    I've Sent the Payment
-                  </button>
+                  <div className="space-y-3">
+                    <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 flex items-start gap-2">
+                      <HelpCircle className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
+                      <p className="text-blue-700 text-xs leading-relaxed">
+                        You must send{' '}
+                        <span className="font-bold">
+                          exactly {payment.totalPayable.toFixed(2)}{' '}
+                          {payment.asset.toUpperCase()}
+                        </span>{' '}
+                        — not more, not less. Sending a different amount will
+                        cause your confirmation to fail and may delay your
+                        deposit.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setConfirmView('confirming')}
+                      className="w-full flex cursor-pointer items-center justify-center gap-2 bg-primary hover:bg-primary-light text-white py-2.5 rounded-xl text-sm font-semibold transition-colors"
+                    >
+                      I've Sent the Payment
+                    </button>
+                  </div>
                 )}
 
                 {confirmView === 'confirming' && (
@@ -351,7 +359,6 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
                         </button>
                       </div>
 
-                      {/* Contextual help */}
                       {showTxHelp && (
                         <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 mb-2 space-y-1.5">
                           <p className="text-xs text-blue-800 font-semibold">

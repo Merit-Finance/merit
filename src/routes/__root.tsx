@@ -43,7 +43,7 @@ function RootComponent() {
   const isAppRoute = !isAuthRoute && !isPublicRoute && !isTokenRoute
 
   useInactivityLogout({
-    timeoutMs: 15 * 60 * 1000, // 15 minutes of inactivity
+    timeoutMs: 10 * 60 * 1000, // 10 minutes of inactivity
     onWarning: (secondsLeft) => {
       console.warn(`Inactivity warning: logging out in ${secondsLeft}s`)
     },
