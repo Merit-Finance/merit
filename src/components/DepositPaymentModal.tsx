@@ -20,6 +20,43 @@ interface Props {
 
 type ConfirmView = 'idle' | 'confirming' | 'success'
 
+const STORAGE_KEY = 'deposit_payment_state'
+
+function savePaymentState(payment: PaymentData, confirmView: ConfirmView, txHash: string) {
+  try {
+    sessionStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ payment, confirmView, txHash }),
+    )
+  } catch {}
+}
+
+function loadPaymentState(): {
+  payment: PaymentData
+  confirmView: ConfirmView
+  txHash: string
+} | null {
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw)
+    // Discard if already expired
+    if (new Date(parsed.payment.expiresAt).getTime() < Date.now()) {
+      sessionStorage.removeItem(STORAGE_KEY)
+      return null
+    }
+    return parsed
+  } catch {
+    return null
+  }
+}
+
+function clearPaymentState() {
+  try {
+    sessionStorage.removeItem(STORAGE_KEY)
+  } catch {}
+}
+
 function useCountdown(expiresAt: string) {
   const getSecondsLeft = () => {
     const diff = new Date(expiresAt).getTime() - Date.now()
@@ -57,10 +94,45 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
   const [showTxHelp, setShowTxHelp] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [confirmError, setConfirmError] = useState<string | null>(null)
+  const [wasRestored, setWasRestored] = useState(false)
 
   const { minutes, seconds, isExpired, isUrgent } = useCountdown(
     payment.expiresAt,
   )
+
+  // On mount: restore state if user came back after switching to wallet app
+  useEffect(() => {
+    const saved = loadPaymentState()
+    if (saved && saved.payment.referenceId === payment.referenceId) {
+      setConfirmView(saved.confirmView)
+      setTxHash(saved.txHash)
+      setWasRestored(true)
+      if (!open) onOpenChange(true)
+    }
+  }, [])
+
+  // Persist state whenever it changes so a refresh doesn't lose progress
+  useEffect(() => {
+    if (open && !isExpired && confirmView !== 'success') {
+      savePaymentState(payment, confirmView, txHash)
+    }
+  }, [open, confirmView, txHash, isExpired])
+
+  // Save immediately when user leaves (switches to wallet app)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (
+        document.visibilityState === 'hidden' &&
+        open &&
+        !isExpired &&
+        confirmView !== 'success'
+      ) {
+        savePaymentState(payment, confirmView, txHash)
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [open, confirmView, txHash, isExpired, payment])
 
   const copyAddress = () => {
     navigator.clipboard.writeText(payment.address)
@@ -98,6 +170,7 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
         asset: payment.asset,
       })
       if (result.success) {
+        clearPaymentState()
         setConfirmView('success')
       } else {
         setConfirmError(
@@ -114,10 +187,12 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
   }
 
   const handleClose = () => {
+    clearPaymentState()
     setConfirmView('idle')
     setTxHash('')
     setConfirmError(null)
     setShowTxHelp(false)
+    setWasRestored(false)
     onOpenChange(false)
   }
 
@@ -164,6 +239,14 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
                 <Dialog.Description className="text-white/50 text-xs">
                   Send the exact amount to the address below
                 </Dialog.Description>
+
+                {wasRestored && (
+                  <div className="mt-3 bg-blue-500/20 border border-blue-400/30 rounded-xl px-3 py-2">
+                    <p className="text-blue-200 text-xs text-center">
+                      👋 Welcome back! Your payment session has been restored.
+                    </p>
+                  </div>
+                )}
 
                 <div className="flex items-center justify-center mt-5">
                   <div className="relative w-20 h-20">
