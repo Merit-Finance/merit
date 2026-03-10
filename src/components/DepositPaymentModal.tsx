@@ -230,7 +230,7 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-gray-900 font-bold text-xl leading-none">
-                        {payment.totalPayable.toFixed(2)}
+                        {payment.totalPayable}
                       </p>
                       <p className="text-blue-500 text-xs font-semibold uppercase mt-0.5">
                         {payment.asset}
@@ -256,8 +256,8 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
                     </button>
                   </div>
                   <p className="text-gray-400 text-xs mt-2 border-t border-gray-200 pt-2">
-                    ≈ ${payment.requestedAmount.toFixed(2)} USD · Fee: $
-                    {payment.networkFee.toFixed(2)}
+                    ≈ ${payment.requestedAmount} USD · Fee: $
+                    {payment.networkFee}
                   </p>
                 </div>
 
@@ -326,7 +326,7 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
                       <p className="text-blue-700 text-xs leading-relaxed">
                         You must send{' '}
                         <span className="font-bold">
-                          exactly {payment.totalPayable.toFixed(2)}{' '}
+                          exactly {payment.totalPayable}{' '}
                           {payment.asset.toUpperCase()}
                         </span>{' '}
                         — not more, not less. Sending a different amount will
