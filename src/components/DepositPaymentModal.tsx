@@ -256,8 +256,7 @@ export function DepositPaymentModal({ open, onOpenChange, payment }: Props) {
                     </button>
                   </div>
                   <p className="text-gray-400 text-xs mt-2 border-t border-gray-200 pt-2">
-                    ≈ ${payment.requestedAmount} USD · Fee: $
-                    {payment.networkFee}
+                    ≈ ${payment.requestedAmount} USD · Fee: ${payment.networkFee}
                   </p>
                 </div>
 
