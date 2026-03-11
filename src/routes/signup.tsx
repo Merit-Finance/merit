@@ -10,7 +10,7 @@ import {
   ArrowRight,
   Tag,
 } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
@@ -32,11 +32,11 @@ const TICKER_ITEMS = [
   'Referral rewards daily',
 ]
 
-function detectCountry(): string {
+async function detectCountryFromIP(): Promise<string> {
   try {
-    const locale = navigator.language || 'en-US'
-    const region = new Intl.Locale(locale).region
-    return region ?? 'US'
+    const res = await fetch('https://ipapi.co/country/')
+    const country = await res.text()
+    return country.trim() || 'US'
   } catch {
     return 'US'
   }
@@ -72,6 +72,12 @@ function SignupPage() {
 
   const referralCodeFromUrl =
     new URLSearchParams(window.location.search).get('ref') ?? ''
+
+  const [detectedCountry, setDetectedCountry] = useState('US')
+
+  useEffect(() => {
+    detectCountryFromIP().then(setDetectedCountry)
+  }, [])
 
   const [formData, setFormData] = useState({
     name: '',
@@ -239,7 +245,7 @@ function SignupPage() {
               disabled={isLoading}
               hasError={!!validationErrors.phoneNumber}
               placeholder="Phone number"
-              defaultCountry={detectCountry()}
+              defaultCountry={detectedCountry}
             />
           </div>
           {validationErrors.phoneNumber && (
