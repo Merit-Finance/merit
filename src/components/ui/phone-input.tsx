@@ -19,7 +19,7 @@ const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
       disabled,
       hasError,
       placeholder = 'Phone number',
-      defaultCountry = 'NG',
+      defaultCountry = 'US',
     },
     ref,
   ) => {
