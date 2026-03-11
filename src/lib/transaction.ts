@@ -1,5 +1,5 @@
 export type TransactionDirection = 'CREDIT' | 'DEBIT'
-export type Network = 'BSC' | 'TON'
+export type Network = 'BSC' | 'T'
 export type TransactionStatus =
   | 'PENDING'
   | 'COMPLETED'
