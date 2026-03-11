@@ -92,9 +92,7 @@ function useCountdown(expiresAt: string) {
 
 const EXPLORER_URLS: Record<string, string> = {
   BSC: 'https://bscscan.com/tx/',
-  TRON: 'https://tronscan.org/#/transaction/',
 }
-
 export function DepositPaymentModal({
   open,
   onOpenChange,
@@ -540,11 +538,7 @@ export function DepositPaymentModal({
                           setTxHash(e.target.value)
                           setConfirmError(null)
                         }}
-                        placeholder={
-                          payment.network.toUpperCase() === 'TRON'
-                            ? 'Paste your TxID here...'
-                            : '0x... paste your transaction hash'
-                        }
+                        placeholder="0x... paste your transaction hash"
                         className="w-full text-xs font-mono border border-[#E8E8E8] rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-gray-300"
                       />
                       <p className="text-[11px] text-gray-400 mt-1">

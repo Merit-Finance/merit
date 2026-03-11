@@ -5,7 +5,7 @@ import apiClient from '@/lib/api-client'
 import { DepositPaymentModal } from './DepositPaymentModal'
 import { Input } from '@/components/ui/input'
 
-type Network = 'BSC' | 'TRON'
+type Network = 'BSC' 
 type View = 'warning' | 'deposit'
 
 export interface PaymentData {
@@ -45,7 +45,7 @@ export function InsufficientBalanceDialog({
   const [paymentData, setPaymentData] = useState<PaymentData | null>(null)
   const [paymentOpen, setPaymentOpen] = useState(false)
 
-  const networks: Network[] = ['BSC', 'TRON']
+  const networks: Network[] = ['BSC']
 
   const resetAndClose = () => {
     setView('warning')
