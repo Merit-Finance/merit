@@ -24,7 +24,8 @@ export const Route = createFileRoute('/dashboard')({
 })
 
 const TX_LIMIT = 10
-const PENDING_CONFIRM_WINDOW_MS = 30 * 60 * 1000 // 30 minutes
+const PENDING_CONFIRM_WINDOW_MS = 30 * 60 * 1000
+const STORAGE_KEY = 'deposit_payment_state'
 
 function isPendingAndConfirmable(tx: Transaction): boolean {
   if (tx.status !== 'PENDING') return false
@@ -32,18 +33,26 @@ function isPendingAndConfirmable(tx: Transaction): boolean {
   const age = Date.now() - new Date(tx.createdAt).getTime()
   return age < PENDING_CONFIRM_WINDOW_MS
 }
-
-/**
- * Reconstruct a minimal PaymentData from a pending DIRECT_DEPOSIT transaction
- * so we can pass it into DepositPaymentModal. Fields not stored on the tx
- * (address, asset, fees) are either pulled from the referenceId or set to
- * sensible defaults — the modal only needs them to pre-fill the hash input and
- * call transactionService.confirmDeposit, which uses referenceId + network.
- */
 function buildPaymentDataFromTx(tx: Transaction): PaymentData {
-  const expiresAt = new Date(
-    new Date(tx.createdAt).getTime() + PENDING_CONFIRM_WINDOW_MS,
-  ).toISOString()
+  // If there's a cached session for this referenceId, reuse its expiresAt so
+  // the countdown is always anchored to the real server expiry time.
+  let expiresAt: string | null = null
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY)
+    if (raw) {
+      const parsed = JSON.parse(raw)
+      if (parsed?.payment?.referenceId === (tx.referenceId ?? tx.id)) {
+        expiresAt = parsed.payment.expiresAt ?? null
+      }
+    }
+  } catch {}
+
+  // Fall back to deriving from createdAt only when no cache is present.
+  if (!expiresAt) {
+    expiresAt = new Date(
+      new Date(tx.createdAt).getTime() + PENDING_CONFIRM_WINDOW_MS,
+    ).toISOString()
+  }
 
   return {
     referenceId: tx.referenceId ?? tx.id,
@@ -119,7 +128,7 @@ function DashboardPage() {
   const handleConfirmModalClose = (open: boolean) => {
     setConfirmPaymentOpen(open)
     if (!open) {
-      setCurrentPage((p) => p) 
+      setCurrentPage((p) => p)
       transactionService
         .getTransactions({ page: currentPage, limit: TX_LIMIT })
         .then((res) => {

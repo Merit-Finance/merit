@@ -16,11 +16,6 @@ interface Props {
   open: boolean
   onOpenChange: (open: boolean) => void
   payment: PaymentData
-  /**
-   * When true the modal opens directly on the "confirming" step (tx-hash input).
-   * Used when the user re-opens the modal from Transaction History where the
-   * deposit address is no longer available.
-   */
   startAtConfirm?: boolean
 }
 
@@ -28,28 +23,36 @@ type ConfirmView = 'idle' | 'confirming' | 'success'
 
 const STORAGE_KEY = 'deposit_payment_state'
 
+interface PersistedState {
+  payment: PaymentData
+  confirmView: ConfirmView
+  txHash: string
+}
+
 function savePaymentState(
   payment: PaymentData,
   confirmView: ConfirmView,
   txHash: string,
 ) {
   try {
-    sessionStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({ payment, confirmView, txHash }),
-    )
+    const state: PersistedState = { payment, confirmView, txHash }
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+
+    const msUntilExpiry = new Date(payment.expiresAt).getTime() - Date.now()
+    if (msUntilExpiry > 0) {
+      setTimeout(() => {
+        clearPaymentState()
+      }, msUntilExpiry)
+    }
   } catch {}
 }
 
-function loadPaymentState(): {
-  payment: PaymentData
-  confirmView: ConfirmView
-  txHash: string
-} | null {
+function loadPaymentState(): PersistedState | null {
   try {
     const raw = sessionStorage.getItem(STORAGE_KEY)
     if (!raw) return null
-    const parsed = JSON.parse(raw)
+    const parsed: PersistedState = JSON.parse(raw)
+    // If the cached expiry has already passed, wipe it and return nothing.
     if (new Date(parsed.payment.expiresAt).getTime() < Date.now()) {
       sessionStorage.removeItem(STORAGE_KEY)
       return null
@@ -112,29 +115,34 @@ export function DepositPaymentModal({
   const [confirmError, setConfirmError] = useState<string | null>(null)
   const [wasRestored, setWasRestored] = useState(false)
 
+  const [activePayment, setActivePayment] = useState<PaymentData>(payment)
+
   useEffect(() => {
     if (startAtConfirm) setConfirmView('confirming')
   }, [startAtConfirm])
 
   const { minutes, seconds, isExpired, isUrgent } = useCountdown(
-    payment.expiresAt,
+    activePayment.expiresAt,
   )
 
   useEffect(() => {
     const saved = loadPaymentState()
     if (saved && saved.payment.referenceId === payment.referenceId) {
+      setActivePayment(saved.payment)
       setConfirmView(saved.confirmView)
       setTxHash(saved.txHash)
       setWasRestored(true)
       if (!open) onOpenChange(true)
+    } else {
+      savePaymentState(payment, startAtConfirm ? 'confirming' : 'idle', '')
     }
   }, [])
 
   useEffect(() => {
     if (open && !isExpired && confirmView !== 'success') {
-      savePaymentState(payment, confirmView, txHash)
+      savePaymentState(activePayment, confirmView, txHash)
     }
-  }, [open, confirmView, txHash, isExpired])
+  }, [open, confirmView, txHash, isExpired, activePayment])
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -144,22 +152,28 @@ export function DepositPaymentModal({
         !isExpired &&
         confirmView !== 'success'
       ) {
-        savePaymentState(payment, confirmView, txHash)
+        savePaymentState(activePayment, confirmView, txHash)
       }
     }
     document.addEventListener('visibilitychange', handleVisibilityChange)
     return () =>
       document.removeEventListener('visibilitychange', handleVisibilityChange)
-  }, [open, confirmView, txHash, isExpired, payment])
+  }, [open, confirmView, txHash, isExpired, activePayment])
+
+  useEffect(() => {
+    if (isExpired) {
+      clearPaymentState()
+    }
+  }, [isExpired])
 
   const copyAddress = () => {
-    navigator.clipboard.writeText(payment.address)
+    navigator.clipboard.writeText(activePayment.address)
     setCopiedAddress(true)
     setTimeout(() => setCopiedAddress(false), 2000)
   }
 
   const copyAmount = () => {
-    navigator.clipboard.writeText(payment.totalPayable.toString())
+    navigator.clipboard.writeText(activePayment.totalPayable.toString())
     setCopiedAmount(true)
     setTimeout(() => setCopiedAmount(false), 2000)
   }
@@ -167,27 +181,28 @@ export function DepositPaymentModal({
   const pad = (n: number) => String(n).padStart(2, '0')
 
   const totalSeconds = Math.floor(
-    (new Date(payment.expiresAt).getTime() -
-      new Date(payment.createdAt).getTime()) /
+    (new Date(activePayment.expiresAt).getTime() -
+      new Date(activePayment.createdAt).getTime()) /
       1000,
   )
   const progress = Math.min((seconds + minutes * 60) / totalSeconds, 1)
   const circumference = 2 * Math.PI * 28
   const strokeDashoffset = circumference * (1 - progress)
 
-  const explorerUrl = EXPLORER_URLS[payment.network.toUpperCase()]
+  const explorerUrl = EXPLORER_URLS[activePayment.network.toUpperCase()]
 
   const handleConfirm = async () => {
     setIsSubmitting(true)
     setConfirmError(null)
     try {
       const result = await transactionService.confirmDeposit({
-        referenceId: payment.referenceId,
+        referenceId: activePayment.referenceId,
         txHash,
-        network: payment.network,
-        asset: payment.asset,
+        network: activePayment.network,
+        asset: activePayment.asset,
       })
       if (result.success) {
+        // Successful confirmation → clear cache immediately.
         clearPaymentState()
         setConfirmView('success')
       } else {
@@ -205,7 +220,9 @@ export function DepositPaymentModal({
   }
 
   const handleClose = () => {
-    clearPaymentState()
+    if (confirmView === 'success' || isExpired) {
+      clearPaymentState()
+    }
     setConfirmView(startAtConfirm ? 'confirming' : 'idle')
     setTxHash('')
     setConfirmError(null)
@@ -214,7 +231,7 @@ export function DepositPaymentModal({
     onOpenChange(false)
   }
 
-  const hasAddress = Boolean(payment.address)
+  const hasAddress = Boolean(activePayment.address)
 
   return (
     <Dialog.Root
@@ -339,10 +356,10 @@ export function DepositPaymentModal({
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="text-gray-900 font-bold text-xl leading-none">
-                            {payment.totalPayable}
+                            {activePayment.totalPayable}
                           </p>
                           <p className="text-blue-500 text-xs font-semibold uppercase mt-0.5">
-                            {payment.asset}
+                            {activePayment.asset}
                           </p>
                         </div>
                         <button
@@ -365,8 +382,8 @@ export function DepositPaymentModal({
                         </button>
                       </div>
                       <p className="text-gray-400 text-xs mt-2 border-t border-gray-200 pt-2">
-                        ≈ ${payment.requestedAmount} USD · Fee: $
-                        {payment.networkFee}
+                        ≈ ${activePayment.requestedAmount} USD · Fee: $
+                        {activePayment.networkFee}
                       </p>
                     </div>
 
@@ -377,7 +394,7 @@ export function DepositPaymentModal({
                         </p>
                         <div className="bg-gray-50 border border-[#E8E8E8] rounded-xl p-3 flex items-center gap-3">
                           <p className="text-xs text-gray-700 font-mono truncate flex-1 select-all">
-                            {payment.address}
+                            {activePayment.address}
                           </p>
                           <button
                             onClick={copyAddress}
@@ -408,16 +425,16 @@ export function DepositPaymentModal({
                     <div>
                       <p className="text-xs text-gray-400 mb-1">Amount</p>
                       <p className="text-gray-900 font-bold text-lg leading-none">
-                        {payment.totalPayable}{' '}
+                        {activePayment.totalPayable}{' '}
                         <span className="text-blue-500 text-xs font-semibold uppercase">
-                          {payment.asset}
+                          {activePayment.asset}
                         </span>
                       </p>
                     </div>
                     <div className="text-right">
                       <p className="text-xs text-gray-400 mb-1">Reference</p>
                       <p className="text-gray-700 font-mono text-xs truncate max-w-[140px]">
-                        {payment.referenceId}
+                        {activePayment.referenceId}
                       </p>
                     </div>
                   </div>
@@ -427,13 +444,13 @@ export function DepositPaymentModal({
                   <div className="bg-gray-50 border border-[#E8E8E8] rounded-xl p-3">
                     <p className="text-xs text-gray-400 mb-1">Network</p>
                     <p className="text-gray-900 font-bold text-sm uppercase">
-                      {payment.network}
+                      {activePayment.network}
                     </p>
                   </div>
                   <div className="bg-gray-50 border border-[#E8E8E8] rounded-xl p-3">
                     <p className="text-xs text-gray-400 mb-1">Reference ID</p>
                     <p className="text-gray-900 font-bold text-sm font-mono truncate">
-                      {payment.referenceId}
+                      {activePayment.referenceId}
                     </p>
                   </div>
                 </div>
@@ -444,11 +461,11 @@ export function DepositPaymentModal({
                     <p className="text-amber-700 text-xs leading-relaxed">
                       Send only{' '}
                       <span className="font-bold uppercase">
-                        {payment.asset}
+                        {activePayment.asset}
                       </span>{' '}
                       on the{' '}
                       <span className="font-bold uppercase">
-                        {payment.network}
+                        {activePayment.network}
                       </span>{' '}
                       network. Sending any other asset may result in permanent
                       loss of funds.
@@ -463,8 +480,8 @@ export function DepositPaymentModal({
                       <p className="text-blue-700 text-xs leading-relaxed">
                         You must send{' '}
                         <span className="font-bold">
-                          exactly {payment.totalPayable}{' '}
-                          {payment.asset.toUpperCase()}
+                          exactly {activePayment.totalPayable}{' '}
+                          {activePayment.asset.toUpperCase()}
                         </span>{' '}
                         — not more, not less. Sending a different amount will
                         cause your confirmation to fail and may delay your
@@ -526,7 +543,7 @@ export function DepositPaymentModal({
                               rel="noopener noreferrer"
                               className="inline-flex items-center gap-1 text-[11px] text-blue-600 font-semibold hover:underline"
                             >
-                              View on {payment.network} Explorer
+                              View on {activePayment.network} Explorer
                               <ExternalLink className="w-3 h-3" />
                             </a>
                           )}
@@ -541,7 +558,7 @@ export function DepositPaymentModal({
                           setConfirmError(null)
                         }}
                         placeholder={
-                          payment.network.toUpperCase() === 'TRON'
+                          activePayment.network.toUpperCase() === 'TRON'
                             ? 'Paste your TxID here...'
                             : '0x... paste your transaction hash'
                         }
@@ -560,7 +577,6 @@ export function DepositPaymentModal({
                     )}
 
                     <div className="flex gap-2">
-                      {/* Only show Back button in the full deposit flow */}
                       {!startAtConfirm && (
                         <button
                           onClick={() => {
