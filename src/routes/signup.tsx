@@ -32,6 +32,16 @@ const TICKER_ITEMS = [
   'Referral rewards daily',
 ]
 
+function detectCountry(): string {
+  try {
+    const locale = navigator.language || 'en-US'
+    const region = new Intl.Locale(locale).region
+    return region ?? 'US'
+  } catch {
+    return 'US'
+  }
+}
+
 function Ticker({ dark = false }: { dark?: boolean }) {
   return (
     <div
@@ -229,7 +239,7 @@ function SignupPage() {
               disabled={isLoading}
               hasError={!!validationErrors.phoneNumber}
               placeholder="Phone number"
-              defaultCountry="NG"
+              defaultCountry={detectCountry()}
             />
           </div>
           {validationErrors.phoneNumber && (

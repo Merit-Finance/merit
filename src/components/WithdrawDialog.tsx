@@ -15,7 +15,7 @@ interface WithdrawDialogProps {
   onSuccess?: () => void
 }
 
-const MIN_WITHDRAWAL = 1
+const MIN_WITHDRAWAL = Number(import.meta.env.VITE_MIN_WITHDRAWAL) || 1
 
 export function WithdrawDialog({
   open,
