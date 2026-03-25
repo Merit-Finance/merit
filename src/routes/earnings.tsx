@@ -12,16 +12,18 @@ export const Route = createFileRoute('/earnings')({
   component: EarningsPage,
 })
 
-function getPlatformFee(level: number, cost: number): number {
+function getPlatformFee(level: number, _cost: number): number {
   if (level === 1) return 3
-  return cost * 0.1
+  if (level === 2) return 1
+  if (level === 3) return 3
+  return 18 // level 4
 }
 
 const levelConfig = [
-  { level: 1, maxPositions: 2, cost: 20, earnings: '$40.00' },
-  { level: 2, maxPositions: 4, cost: 30, earnings: '$120.00' },
-  { level: 3, maxPositions: 8, cost: 80, earnings: '$640.00' },
-  { level: 4, maxPositions: 16, cost: 300, earnings: '$4800.00' },
+  { level: 1, maxPositions: 2, cost: 7, earnings: '$14.00' },
+  { level: 2, maxPositions: 4, cost: 10, earnings: '$40.00' },
+  { level: 3, maxPositions: 8, cost: 30, earnings: '$240.00' },
+  { level: 4, maxPositions: 16, cost: 180, earnings: '$2880.00' },
 ]
 
 function getDepthNodes(node: MatrixNode, depth: number): MatrixNode[] {
@@ -288,9 +290,8 @@ function EarningsPage() {
         </div>
 
         <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 mb-4 text-xs text-blue-700 leading-relaxed">
-          <span className="font-semibold">Platform Fee:</span> Level 1 includes
-          a fixed $3.00 fee. Levels 2–4 include a 10% platform fee on top of the
-          level cost.
+          <span className="font-semibold">Platform Fee:</span> Level 1: $3 ·
+          Level 2: $1 · Level 3: $3 · Level 4: $18 (fixed fees per level).
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">

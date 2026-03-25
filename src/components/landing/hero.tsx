@@ -11,12 +11,11 @@ const TRUST_AVATARS = [
 ]
 
 const STATS = [
-  { label: 'Starting with just $23' },
-  { label: '$5k+ balance at level 4' },
+  { label: 'Starting with just $10' },
+  { label: '$2,880+ balance at level 4' },
   { label: 'Withdraw anytime' },
   { label: '24/7 support' },
 ]
-
 export function Hero() {
   const navigate = useNavigate()
 
