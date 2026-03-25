@@ -75,7 +75,7 @@ function ReferralsPage() {
       id: 3,
       label: 'Referral Earnings',
       value: `$${parseFloat(referralStat?.referralBalance ?? '0').toFixed(2)}`,
-      sub: '$2 per referral',
+      sub: '$0.70 per referral',
       icon: TrendingUp,
       iconColor: 'text-purple-500',
       valueColor: 'text-purple-500',
@@ -87,7 +87,7 @@ function ReferralsPage() {
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Referrals</h1>
         <p className="text-gray-500 text-sm mt-1">
-          Share your referral link and earn $2 per activated referral
+          Share your referral link and earn $0.70 per activated referral
         </p>
       </div>
 
@@ -169,7 +169,7 @@ function ReferralsPage() {
         </div>
         <div className="bg-blue-50 border border-blue-100 rounded-lg px-4 py-3">
           <p className="text-sm text-blue-600 mt-1">
-            Earn $2 for every user who joins and activates using your link.
+            Earn $0.70 for every user who joins and activates using your link.
             Bonus is added to your Referral Bonus Account.
           </p>
         </div>
